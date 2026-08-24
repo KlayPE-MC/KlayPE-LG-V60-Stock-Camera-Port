@@ -2,6 +2,9 @@
 
 ## Reproducible developer kit
 
+- Bundled the six-file stable vendor camera override set from the working
+  2026-08-23 reference ROM, with automatic backup, installation and hash
+  verification against a normal `vendor/lge/timelm` tree.
 - Published the complete LineageOS 23.2 `timelm` device tree on the exact
   working base revision.
 - Added the required `frameworks/av` opaque-output usage patch; the earlier

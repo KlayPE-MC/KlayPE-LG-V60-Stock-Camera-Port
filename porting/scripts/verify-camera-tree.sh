@@ -2,6 +2,7 @@
 set -euo pipefail
 
 TREE="${1:-device/lge/timelm}"
+TREE=$(realpath "$TREE")
 
 required=(
   "$TREE/camera-lg/Android.bp"
@@ -14,7 +15,10 @@ required=(
   "$TREE/camera-lg/prebuilt/vendor/lib64/com.qti.feature2.hdr.so"
   "$TREE/camera-lg/prebuilt/vendor/etc/camera/iqm/ai_checker_graph.dlc"
   "$TREE/camera-lg/prebuilt/vendor/etc/camera/film/0_film.dat"
+  "$TREE/camera-lg/prebuilt/vendor-overrides/vendor/lib64/hw/camera.kona.so"
+  "$TREE/camera-lg/prebuilt/vendor-overrides/vendor/lib64/camera/com.qti.tuned.s5kgw1.bin"
   "$TREE/porting/patches/frameworks-av/0001-camera3-support-legacy-lg-opaque-output-usage.patch"
+  "$TREE/porting/STABLE_VENDOR_CAMERA_SHA256SUMS"
 )
 
 failed=0
@@ -47,5 +51,10 @@ if ! grep -q 'com.lge.camera' "$TREE/system_ext.prop"; then
   failed=1
 fi
 
-exit "$failed"
+if ! (cd "$TREE/camera-lg/prebuilt/vendor-overrides" && \
+      sha256sum -c "$TREE/porting/STABLE_VENDOR_CAMERA_SHA256SUMS"); then
+  printf 'HASH MISMATCH in stable vendor camera override set\n' >&2
+  failed=1
+fi
 
+exit "$failed"

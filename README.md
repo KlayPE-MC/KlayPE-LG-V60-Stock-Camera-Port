@@ -14,6 +14,7 @@ Maintained and tested by **KlayPE** (`KlayPE-MC`).
 - LG framework/resource compatibility classes and permissions;
 - the CameraSolution, ArcSoft, Morpho, CVP, SNPE and OpenCL libraries;
 - matching V40G Feature2 libraries, IQM models and film data;
+- the pinned stable vendor camera HAL/statistics/tuning override set;
 - the required Android camera-service compatibility patch;
 - APK reconstruction patches, verification scripts and a regression matrix.
 
@@ -50,6 +51,26 @@ git -C device/lge/timelm lfs pull
 Use the normal Lineage `vendor/lge/timelm` repository or extraction workflow
 for the base V60 vendor blobs. The additional files unique to this camera port
 are already under `camera-lg/prebuilt`.
+
+## Pin the tested vendor camera set
+
+After syncing or extracting `vendor/lge/timelm`, install the six camera files
+captured from the working `LineageOS23.2-timelm-LGCamera-FINAL-20260823`
+build:
+
+```bash
+device/lge/timelm/porting/scripts/apply-stable-camera-vendor-overrides.sh \
+  vendor/lge/timelm
+```
+
+The script verifies every bundled file, saves the original vendor files below
+`out/klaype-camera-vendor-backup/original`, installs the stable set at the
+paths already consumed by the normal vendor makefiles, and verifies the result.
+Run it again after replacing or re-extracting the vendor tree.
+
+This avoids duplicate Soong modules and pins `camera.kona.so`, the matching
+AEC/AF/AWB components and the `s5kgw1` tuning file without importing the whole
+vendor repository.
 
 ## Required platform patch
 
@@ -116,4 +137,3 @@ and inert controls.
 Integration, compatibility code, documentation and patches are published by
 KlayPE for LG V60 ROM development. LG applications and proprietary binaries
 remain the property of their respective copyright holders. See `NOTICE.md`.
-
