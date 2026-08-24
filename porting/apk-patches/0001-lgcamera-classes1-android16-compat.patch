@@ -1,0 +1,974 @@
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/BaseActivity.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/BaseActivity.smali
+index f659965..b17255e 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/BaseActivity.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/BaseActivity.smali
+@@ -2699,29 +2699,8 @@
+ .end method
+ 
+ .method public minimizeAllFreeforms()V
+-    .locals 1
+-
+-    .line 1453
+-    :try_start_0
+-    invoke-static {}, Landroid/app/ActivityTaskManager;->getService()Landroid/app/IActivityTaskManager;
+-
+-    move-result-object p0
+-
+-    const/4 v0, 0x0
+-
+-    invoke-interface {p0, v0}, Landroid/app/IActivityTaskManager;->minimizeAllFreeforms(I)V
+-    :try_end_0
+-    .catch Landroid/os/RemoteException; {:try_start_0 .. :try_end_0} :catch_0
+-
+-    goto :goto_0
+-
+-    :catch_0
+-    move-exception p0
+-
+-    .line 1455
+-    invoke-virtual {p0}, Landroid/os/RemoteException;->printStackTrace()V
++    .locals 0
+ 
+-    :goto_0
+     return-void
+ .end method
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/BoostService.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/BoostService.smali
+index c3509d9..2b80b0a 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/BoostService.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/BoostService.smali
+@@ -6,7 +6,7 @@
+ # static fields
+ .field private static final SOUNDLOAD_WAIT_TIME_MILLIS:I = 0x1388
+ 
+-.field private static sIsInit:Z = false
++.field private static sIsInit:Z
+ 
+ .field public static sSoundLoadWait:Landroid/os/ConditionVariable;
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/CameraActivity.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/CameraActivity.smali
+index 4991699..fdcdead 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/CameraActivity.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/CameraActivity.smali
+@@ -7,7 +7,7 @@
+ 
+ 
+ # static fields
+-.field protected static final DBG:Z = false
++.field protected static final DBG:Z
+ 
+ 
+ # instance fields
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/VideoRecorder.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/VideoRecorder.smali
+index c22c625..2834d8f 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/VideoRecorder.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/VideoRecorder.smali
+@@ -30,17 +30,17 @@
+ 
+ .field public static sFPS:I = 0x1e
+ 
+-.field private static sFileName:Ljava/lang/String; = null
++.field private static sFileName:Ljava/lang/String;
+ 
+-.field private static sFilePath:Ljava/lang/String; = null
++.field private static sFilePath:Ljava/lang/String;
+ 
+-.field private static sFilePathForLoopRecording:Ljava/lang/String; = null
++.field private static sFilePathForLoopRecording:Ljava/lang/String;
+ 
+-.field private static sInit:Z = false
++.field private static sInit:Z
+ 
+-.field public static sIsRCSIntent:Z = false
++.field public static sIsRCSIntent:Z
+ 
+-.field private static sIsRecording:Z = false
++.field private static sIsRecording:Z
+ 
+ .field private static sLoopRecordStartTime:J
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/shotMode/ai/AIMgrBase.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/shotMode/ai/AIMgrBase.smali
+index 77b6dbb..def3acb 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/shotMode/ai/AIMgrBase.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/shotMode/ai/AIMgrBase.smali
+@@ -4772,7 +4772,7 @@
+ 
+     const/4 v0, -0x1
+ 
+-    if-eqz p1, :cond_8
++    if-eqz p1, :cond_9
+ 
+     if-nez p2, :cond_0
+ 
+@@ -4798,7 +4798,12 @@
+ 
+     move-result-object p1
+ 
++    if-nez p1, :cond_1
++
++    return-void
++
+     .line 660
++    :cond_1
+     invoke-virtual {p1}, Lcom/lge/camera/settings/ListPreference;->getEntryValues()[Ljava/lang/CharSequence;
+ 
+     move-result-object p1
+@@ -4814,7 +4819,7 @@
+ 
+     const/4 v3, 0x0
+ 
+-    if-eqz v1, :cond_1
++    if-eqz v1, :cond_2
+ 
+     iget-object v1, p0, Lcom/lge/camera/app/shotMode/ai/AIMgrBase;->mSetFilterPrefix:Ljava/lang/String;
+ 
+@@ -4825,13 +4830,13 @@
+ 
+     move-result v1
+ 
+-    if-nez v1, :cond_1
++    if-nez v1, :cond_2
+ 
+     move v1, v2
+ 
+     goto :goto_0
+ 
+-    :cond_1
++    :cond_2
+     move v1, v3
+ 
+     :goto_0
+@@ -4845,12 +4850,12 @@
+     :goto_1
+     array-length v7, p1
+ 
+-    if-ge v4, v7, :cond_6
++    if-ge v4, v7, :cond_7
+ 
+     .line 668
+     aget-object v7, p1, v4
+ 
+-    if-eqz v7, :cond_5
++    if-eqz v7, :cond_6
+ 
+     .line 669
+     aget-object v7, p1, v4
+@@ -4859,18 +4864,18 @@
+ 
+     move-result v7
+ 
+-    if-eqz v7, :cond_5
++    if-eqz v7, :cond_6
+ 
+-    if-nez v5, :cond_2
++    if-nez v5, :cond_3
+ 
+     move v5, v4
+ 
+-    :cond_2
++    :cond_3
+     add-int/lit8 v7, v5, 0x2
+ 
+-    if-gt v4, v7, :cond_4
++    if-gt v4, v7, :cond_5
+ 
+-    if-eqz v1, :cond_3
++    if-eqz v1, :cond_4
+ 
+     .line 675
+     aget-object v7, p1, v4
+@@ -4881,12 +4886,12 @@
+ 
+     move-result v7
+ 
+-    if-nez v7, :cond_4
++    if-nez v7, :cond_5
+ 
+     goto :goto_2
+ 
+     .line 679
+-    :cond_3
++    :cond_4
+     aget-object v7, p1, v4
+ 
+     const-string v8, "2_L"
+@@ -4895,7 +4900,7 @@
+ 
+     move-result v7
+ 
+-    if-nez v7, :cond_5
++    if-nez v7, :cond_6
+ 
+     aget-object v7, p1, v4
+ 
+@@ -4906,11 +4911,11 @@
+ 
+     move-result v7
+ 
+-    if-eqz v7, :cond_4
++    if-eqz v7, :cond_5
+ 
+     goto :goto_2
+ 
+-    :cond_4
++    :cond_5
+     add-int/lit8 v6, v6, 0x1
+ 
+     .line 686
+@@ -4920,25 +4925,25 @@
+ 
+     move-result v7
+ 
+-    if-eqz v7, :cond_5
++    if-eqz v7, :cond_6
+ 
+     goto :goto_3
+ 
+-    :cond_5
++    :cond_6
+     :goto_2
+     add-int/lit8 v4, v4, 0x1
+ 
+     goto :goto_1
+ 
+-    :cond_6
++    :cond_7
+     move v2, v3
+ 
+     :goto_3
+-    if-nez v2, :cond_7
++    if-nez v2, :cond_8
+ 
+     goto :goto_4
+ 
+-    :cond_7
++    :cond_8
+     move v0, v6
+ 
+     .line 696
+@@ -4947,7 +4952,7 @@
+ 
+     return-void
+ 
+-    :cond_8
++    :cond_9
+     :goto_5
+     const/4 p1, 0x0
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/shotMode/panorama/PanoramaEngine.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/shotMode/panorama/PanoramaEngine.smali
+index fac08cc..08195e8 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/shotMode/panorama/PanoramaEngine.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/shotMode/panorama/PanoramaEngine.smali
+@@ -84,7 +84,7 @@
+ 
+ .field protected static sBUFFER_SIZE:I = 0x6
+ 
+-.field protected static sREAD_EXIF:Z = false
++.field protected static sREAD_EXIF:Z
+ 
+ 
+ # instance fields
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/shotMode/timelapse/CircularEncoderBuffer.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/shotMode/timelapse/CircularEncoderBuffer.smali
+index 57ab95d..7d10f6b 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/shotMode/timelapse/CircularEncoderBuffer.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/shotMode/timelapse/CircularEncoderBuffer.smali
+@@ -8,7 +8,7 @@
+ 
+ .field private static final TAG:Ljava/lang/String; = "CircularEncoderBuffer"
+ 
+-.field private static final VERBOSE:Z = false
++.field private static final VERBOSE:Z
+ 
+ 
+ # instance fields
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/shotMode/timelapse/TimelapseEncoder$1$1.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/shotMode/timelapse/TimelapseEncoder$1$1.smali
+index fe9f408..54ec490 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/shotMode/timelapse/TimelapseEncoder$1$1.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/shotMode/timelapse/TimelapseEncoder$1$1.smali
+@@ -89,8 +89,6 @@
+ 
+     const-string v2, "LGTL"
+ 
+-    invoke-virtual {v1, v2}, Landroid/media/MediaMuxer;->setRecordingType(Ljava/lang/String;)V
+-
+     .line 418
+     iget-object v1, p0, Lcom/lge/camera/app/shotMode/timelapse/TimelapseEncoder$1$1;->this$1:Lcom/lge/camera/app/shotMode/timelapse/TimelapseEncoder$1;
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/shotMode/timelapse/TimelapseEncoder.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/shotMode/timelapse/TimelapseEncoder.smali
+index d810a55..71d851e 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/shotMode/timelapse/TimelapseEncoder.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/shotMode/timelapse/TimelapseEncoder.smali
+@@ -17,7 +17,7 @@
+ 
+ 
+ # static fields
+-.field public static final DBG:Z = false
++.field public static final DBG:Z
+ 
+ 
+ # instance fields
+@@ -958,10 +958,10 @@
+     goto :goto_0
+ 
+     :cond_0
+-    const-string v1, "OMX.qcom.video.encoder.hevc"
++    const-string/jumbo v1, "video/hevc"
+ 
+     .line 213
+-    invoke-static {v1}, Landroid/media/MediaCodec;->createByCodecName(Ljava/lang/String;)Landroid/media/MediaCodec;
++    invoke-static {v1}, Landroid/media/MediaCodec;->createEncoderByType(Ljava/lang/String;)Landroid/media/MediaCodec;
+ 
+     move-result-object v1
+ 
+@@ -992,10 +992,10 @@
+     goto :goto_1
+ 
+     :cond_2
+-    const-string v1, "OMX.qcom.video.encoder.avc"
++    const-string/jumbo v1, "video/avc"
+ 
+     .line 220
+-    invoke-static {v1}, Landroid/media/MediaCodec;->createByCodecName(Ljava/lang/String;)Landroid/media/MediaCodec;
++    invoke-static {v1}, Landroid/media/MediaCodec;->createEncoderByType(Ljava/lang/String;)Landroid/media/MediaCodec;
+ 
+     move-result-object v1
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/swivel/SwivelGLViewGrp.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/swivel/SwivelGLViewGrp.smali
+index 275e3fd..048cba0 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/swivel/SwivelGLViewGrp.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/swivel/SwivelGLViewGrp.smali
+@@ -4,7 +4,7 @@
+ 
+ 
+ # static fields
+-.field public static final DBG:Z = false
++.field public static final DBG:Z
+ 
+ 
+ # instance fields
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/swivel/SwivelUiPresentation.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/swivel/SwivelUiPresentation.smali
+index 7f98e8c..9cd2e47 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/app/swivel/SwivelUiPresentation.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/app/swivel/SwivelUiPresentation.smali
+@@ -7,7 +7,7 @@
+ 
+ 
+ # static fields
+-.field public static final DBG_PRESENTATION:Z = false
++.field public static final DBG_PRESENTATION:Z
+ 
+ 
+ # instance fields
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/components/OnScreenHint.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/components/OnScreenHint.smali
+index 5fd6a38..30f8691 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/components/OnScreenHint.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/components/OnScreenHint.smali
+@@ -18,9 +18,9 @@
+ 
+ .field private static sGravityPortraitReverse:I = 0x800013
+ 
+-.field private static sLastMessage:[Ljava/lang/String; = null
++.field private static sLastMessage:[Ljava/lang/String;
+ 
+-.field private static sToastLocation:Z = false
++.field private static sToastLocation:Z
+ 
+ 
+ # instance fields
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/constants/CameraConstants.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/constants/CameraConstants.smali
+index 43bdb80..6624d85 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/constants/CameraConstants.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/constants/CameraConstants.smali
+@@ -1738,7 +1738,7 @@
+ 
+ .field public static final REAR_CAMERA_STR:Ljava/lang/String; = "rear"
+ 
+-.field public static REAR_DUAL_CAMERA:I = 0x3
++.field public static REAR_DUAL_CAMERA:I = 0x0
+ 
+ .field public static final RECEIVER_TYPE_ALL:I = 0xf
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/constants/ConfigurationManualUtil.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/constants/ConfigurationManualUtil.smali
+index 97064fe..9d7399e 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/constants/ConfigurationManualUtil.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/constants/ConfigurationManualUtil.smali
+@@ -14,7 +14,7 @@
+ 
+ .field public static sMANUAL_FOCUS_SUPPORTED:Z = true
+ 
+-.field public static sRAW_PICTURE_SAVING_SUPPORTED_VALUE:Z = false
++.field public static sRAW_PICTURE_SAVING_SUPPORTED_VALUE:Z
+ 
+ 
+ # direct methods
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/constants/ConfigurationResolutionUtilBase.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/constants/ConfigurationResolutionUtilBase.smali
+index 4101af5..5b4f916 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/constants/ConfigurationResolutionUtilBase.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/constants/ConfigurationResolutionUtilBase.smali
+@@ -96,63 +96,63 @@
+ 
+ .field public static final VIDEO_SIZE_SUB_REAR_SUPPORTED:Ljava/lang/String; = "video_size_sub_rear_supported"
+ 
+-.field public static sCAMERA_PICTURESIZE_BINNING_REAR_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PICTURESIZE_BINNING_REAR_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PICTURESIZE_BINNING_SUB2_REAR_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PICTURESIZE_BINNING_SUB2_REAR_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PICTURESIZE_BINNING_SUB_REAR_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PICTURESIZE_BINNING_SUB_REAR_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PICTURESIZE_FRONT_DEFAULT_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PICTURESIZE_FRONT_DEFAULT_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PICTURESIZE_FRONT_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PICTURESIZE_FRONT_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PICTURESIZE_MONO_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PICTURESIZE_MONO_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PICTURESIZE_REAR_DEFAULT_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PICTURESIZE_REAR_DEFAULT_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PICTURESIZE_REAR_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PICTURESIZE_REAR_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PICTURESIZE_SUB2_REAR_DEFAULT_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PICTURESIZE_SUB2_REAR_DEFAULT_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PICTURESIZE_SUB2_REAR_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PICTURESIZE_SUB2_REAR_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PICTURESIZE_SUB_FRONT_DEFAULT_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PICTURESIZE_SUB_FRONT_DEFAULT_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PICTURESIZE_SUB_FRONT_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PICTURESIZE_SUB_FRONT_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PICTURESIZE_SUB_REAR_DEFAULT_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PICTURESIZE_SUB_REAR_DEFAULT_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PICTURESIZE_SUB_REAR_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PICTURESIZE_SUB_REAR_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PREVIEWSIZEONSCREEN_FRONT_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PREVIEWSIZEONSCREEN_FRONT_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PREVIEWSIZEONSCREEN_MONO_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PREVIEWSIZEONSCREEN_MONO_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PREVIEWSIZEONSCREEN_REAR_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PREVIEWSIZEONSCREEN_REAR_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PREVIEWSIZEONSCREEN_SUB2_REAR_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PREVIEWSIZEONSCREEN_SUB2_REAR_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PREVIEWSIZEONSCREEN_SUB_FRONT_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PREVIEWSIZEONSCREEN_SUB_FRONT_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PREVIEWSIZEONSCREEN_SUB_REAR_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PREVIEWSIZEONSCREEN_SUB_REAR_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PREVIEWSIZE_FRONT_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PREVIEWSIZE_FRONT_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PREVIEWSIZE_MONO_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PREVIEWSIZE_MONO_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PREVIEWSIZE_REAR_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PREVIEWSIZE_REAR_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PREVIEWSIZE_SUB2_REAR_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PREVIEWSIZE_SUB2_REAR_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PREVIEWSIZE_SUB_FRONT_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PREVIEWSIZE_SUB_FRONT_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+-.field public static sCAMERA_PREVIEWSIZE_SUB_REAR_SUPPORTED_ITEMS:[Ljava/lang/String; = null
++.field public static sCAMERA_PREVIEWSIZE_SUB_REAR_SUPPORTED_ITEMS:[Ljava/lang/String;
+ 
+ .field private static final sFrontDensity:[F
+ 
+-.field protected static sIsDpConfigFormat:Z = false
++.field protected static sIsDpConfigFormat:Z
+ 
+-.field public static sIsScreenResolutionChanged:Z = false
++.field public static sIsScreenResolutionChanged:Z
+ 
+ .field private static final sRearDensity:[F
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/constants/ConfigurationUtil.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/constants/ConfigurationUtil.smali
+index 4d692b6..439e0b3 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/constants/ConfigurationUtil.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/constants/ConfigurationUtil.smali
+@@ -2176,36 +2176,43 @@
+ .method public static isDualOutfocus(Z)Z
+     .locals 3
+ 
++    if-eqz p0, :cond_0
++
++    const/4 p0, 0x0
++
++    return p0
++
++    :cond_0
+     const/4 v0, 0x1
+ 
+     const/4 v1, 0x0
+ 
+     const/4 v2, 0x2
+ 
+-    if-eqz p0, :cond_1
++    if-eqz p0, :cond_2
+ 
+     .line 166
+     sget p0, Lcom/lge/camera/constants/ConfigurationUtil;->sREAR_OUTFOCUS_TYPE:I
+ 
+-    if-ne p0, v2, :cond_0
++    if-ne p0, v2, :cond_1
+ 
+     goto :goto_0
+ 
+-    :cond_0
++    :cond_1
+     move v0, v1
+ 
+     :goto_0
+     return v0
+ 
+     .line 169
+-    :cond_1
++    :cond_2
+     sget p0, Lcom/lge/camera/constants/ConfigurationUtil;->sFRONT_OUTFOCUS_TYPE:I
+ 
+-    if-ne p0, v2, :cond_2
++    if-ne p0, v2, :cond_3
+ 
+     goto :goto_1
+ 
+-    :cond_2
++    :cond_3
+     move v0, v1
+ 
+     :goto_1
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/constants/FunctionProperties.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/constants/FunctionProperties.smali
+index d0b98c6..8b441fd 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/constants/FunctionProperties.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/constants/FunctionProperties.smali
+@@ -28,17 +28,17 @@
+ 
+ .field public static sIsSupportedFingerprintMode:I = -0x1
+ 
+-.field private static sIsSupportedQuadMic:Ljava/lang/Boolean; = null
++.field private static sIsSupportedQuadMic:Ljava/lang/Boolean;
+ 
+-.field private static sIsSupportedUsbEarJack:Ljava/lang/Boolean; = null
++.field private static sIsSupportedUsbEarJack:Ljava/lang/Boolean;
+ 
+-.field public static sMAX_COUNT:I = 0x0
++.field public static sMAX_COUNT:I
+ 
+-.field public static sMAX_COUNT_FRONT:I = 0x0
++.field public static sMAX_COUNT_FRONT:I
+ 
+-.field private static sNewUIValue:Z = false
++.field private static sNewUIValue:Z
+ 
+-.field public static sSensorStatus:Z = false
++.field public static sSensorStatus:Z
+ 
+ .field private static sisSupportedUltraWideCorrection:Ljava/lang/Boolean;
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/constants/MultimediaProperties.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/constants/MultimediaProperties.smali
+index efabb57..9c53328 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/constants/MultimediaProperties.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/constants/MultimediaProperties.smali
+@@ -603,15 +603,55 @@
+ .method public static getManualVideoSupportedListStr(IIF)Ljava/lang/String;
+     .locals 3
+ 
++    const v1, 0x3fe38e39
++
++    invoke-static {p2, v1}, Ljava/lang/Float;->compare(FF)I
++
++    move-result v1
++
++    if-eqz v1, :cond_0
++
++    const-string v0, "NotSupport"
++
++    return-object v0
++
++    :cond_0
++    const/16 v1, 0x8
++
++    if-ne p1, v1, :cond_1
++
++    const-string v0, "1920x1080:3840x2160:1,2,24,30:64000000,48000000,30000000"
++
++    return-object v0
++
++    :cond_1
++    const/4 v1, 0x6
++
++    if-ne p1, v1, :cond_2
++
++    const-string v0, "1920x1080:1920x1080:1,2,24,30,60:24000000,17000000,10000000:36000000,24000000,12000000"
++
++    return-object v0
++
++    :cond_2
++    const/4 v1, 0x5
++
++    if-ne p1, v1, :cond_3
++
++    const-string v0, "1280x720:1280x720:1,2,24,30,60,120:36000000,24000000,12000000:18000000,12000000,6000000:36000000,24000000,12000000:48000000,36000000,24000000"
++
++    return-object v0
++
++    :cond_3
+     const-string v0, "NotSupport"
+ 
+     const/4 v1, 0x2
+ 
+-    if-ne p0, v1, :cond_0
++    if-ne p0, v1, :cond_4
+ 
+     goto :goto_0
+ 
+-    :cond_0
++    :cond_4
+     const/4 v1, 0x0
+ 
+     .line 297
+@@ -626,12 +666,12 @@
+ 
+     move-result v2
+ 
+-    if-nez v2, :cond_1
++    if-nez v2, :cond_5
+ 
+     return-object p0
+ 
+     .line 299
+-    :cond_1
++    :cond_5
+     new-instance p0, Ljava/lang/Exception;
+ 
+     invoke-direct {p0, v0}, Ljava/lang/Exception;-><init>(Ljava/lang/String;)V
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/device/angle/AngleMgr.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/device/angle/AngleMgr.smali
+index 46fe99b..d0f9b43 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/device/angle/AngleMgr.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/device/angle/AngleMgr.smali
+@@ -3711,7 +3711,7 @@
+     goto :goto_1
+ 
+     :cond_2
+-    move v3, v4
++    const/4 v3, 0x3
+ 
+     .line 308
+     :cond_3
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/device/angle/CameraIdProperties.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/device/angle/CameraIdProperties.smali
+index 03746a5..07eaf9c 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/device/angle/CameraIdProperties.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/device/angle/CameraIdProperties.smali
+@@ -10,7 +10,7 @@
+ 
+ .field public static final THIRD_CAMERA:I = 0x2
+ 
+-.field private static sCameraIdMap:Ljava/util/HashMap; = null
++.field private static sCameraIdMap:Ljava/util/HashMap;
+     .annotation system Ldalvik/annotation/Signature;
+         value = {
+             "Ljava/util/HashMap<",
+@@ -21,9 +21,9 @@
+     .end annotation
+ .end field
+ 
+-.field private static sDualCutOverList:[I = null
++.field private static sDualCutOverList:[I
+ 
+-.field private static sFrontIds:Ljava/util/ArrayList; = null
++.field private static sFrontIds:Ljava/util/ArrayList;
+     .annotation system Ldalvik/annotation/Signature;
+         value = {
+             "Ljava/util/ArrayList<",
+@@ -33,7 +33,7 @@
+     .end annotation
+ .end field
+ 
+-.field public static sLoaded:Z = false
++.field public static sLoaded:Z
+ 
+ .field private static sOptic2PhysicalCameraIds:Ljava/util/ArrayList;
+     .annotation system Ldalvik/annotation/Signature;
+@@ -2628,6 +2628,8 @@
+ 
+     move-result v1
+ 
++    const/4 v1, 0x0
++
+     .line 160
+     invoke-static {v1}, Lcom/lge/camera/constants/CameraConstants;->setRearDualCameraId(I)V
+     :try_end_0
+@@ -2798,27 +2800,58 @@
+     sget-object v1, Lcom/lge/camera/device/angle/CameraIdProperties;->sOpticPhysicalCameraIdMap:Ljava/util/HashMap;
+ 
+     invoke-virtual {v1}, Ljava/util/HashMap;->clear()V
++
++    sget-object v1, Lcom/lge/camera/device/angle/CameraIdProperties;->sCameraIdMap:Ljava/util/HashMap;
++
++    const/4 v2, 0x2
++
++    invoke-static {v2}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
++
++    move-result-object v4
++
++    const-string v5, "2"
++
++    invoke-virtual {p0, v5}, Landroid/hardware/camera2/CameraManager;->getCameraCharacteristics(Ljava/lang/String;)Landroid/hardware/camera2/CameraCharacteristics;
++
++    move-result-object v5
++
++    invoke-static {v5, v2}, Lcom/lge/camera/device/CameraInfomation;->createCameraInfo(Landroid/hardware/camera2/CameraCharacteristics;I)Lcom/lge/camera/device/CameraInfomation;
++
++    move-result-object v5
++
++    invoke-virtual {v1, v4, v5}, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
++
++    sget-object v1, Lcom/lge/camera/device/angle/CameraIdProperties;->sRearIds:Ljava/util/ArrayList;
++
++    invoke-static {v2}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
++
++    move-result-object v2
++
++    invoke-virtual {v1, v2}, Ljava/util/ArrayList;->contains(Ljava/lang/Object;)Z
++
++    move-result v4
++
++    if-nez v4, :cond_2
++
++    invoke-virtual {v1, v2}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+     :try_end_4
+     .catchall {:try_start_4 .. :try_end_4} :catchall_0
+ 
+     .line 189
++    :cond_2
+     :try_start_5
+     invoke-static {}, Lcom/lge/camera/device/angle/CameraIdProperties;->isSupportRearMultipleAngle()Z
+ 
+     move-result v1
+ 
+-    if-eqz v1, :cond_8
++    if-eqz v1, :cond_9
+ 
+     sget v1, Lcom/lge/camera/constants/ConfigurationUtil;->sOPTIC_ZOOM_SUPPORTED:I
+ 
+-    if-lez v1, :cond_8
++    if-lez v1, :cond_9
+ 
+     .line 190
+-    sget-object v1, Lcom/lge/camera/device/angle/CameraIdProperties;->sCameraIdMap:Ljava/util/HashMap;
+-
+-    invoke-virtual {v1}, Ljava/util/HashMap;->size()I
+-
+-    move-result v1
++    const/4 v1, 0x5
+ 
+     .line 191
+     invoke-static {v1}, Lcom/lge/camera/constants/CameraConstants;->setOpticZoomCameraId(I)V
+@@ -2844,6 +2877,26 @@
+ 
+     invoke-virtual {v2, v4, v5}, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+ 
++    sget-object v2, Lcom/lge/camera/device/angle/CameraIdProperties;->sCameraIdMap:Ljava/util/HashMap;
++
++    const/4 v4, 0x2
++
++    invoke-static {v4}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
++
++    move-result-object v5
++
++    const-string v6, "2"
++
++    invoke-virtual {p0, v6}, Landroid/hardware/camera2/CameraManager;->getCameraCharacteristics(Ljava/lang/String;)Landroid/hardware/camera2/CameraCharacteristics;
++
++    move-result-object v6
++
++    invoke-static {v6, v4}, Lcom/lge/camera/device/CameraInfomation;->createCameraInfo(Landroid/hardware/camera2/CameraCharacteristics;I)Lcom/lge/camera/device/CameraInfomation;
++
++    move-result-object v6
++
++    invoke-virtual {v2, v5, v6}, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
++
+     .line 193
+     sget-object v2, Lcom/lge/camera/device/angle/CameraIdProperties;->sOpticCameraIds:Ljava/util/ArrayList;
+ 
+@@ -2882,7 +2935,7 @@
+     move v5, v4
+ 
+     :goto_2
+-    if-ge v5, v2, :cond_2
++    if-ge v5, v2, :cond_3
+ 
+     .line 198
+     sget-object v6, Lcom/lge/camera/device/angle/CameraIdProperties;->sOpticPhysicalCameraIds:Ljava/util/ArrayList;
+@@ -2906,7 +2959,7 @@
+     goto :goto_2
+ 
+     .line 201
+-    :cond_2
++    :cond_3
+     sget-object v2, Lcom/lge/camera/device/angle/CameraIdProperties;->sOpticPhysicalCameraIdMap:Ljava/util/HashMap;
+ 
+     invoke-static {v1}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+@@ -2959,7 +3012,7 @@
+ 
+     const/4 v5, 0x3
+ 
+-    if-lt v2, v5, :cond_4
++    if-lt v2, v5, :cond_5
+ 
+     add-int/2addr v1, v3
+ 
+@@ -3023,7 +3076,7 @@
+     move v6, v4
+ 
+     :goto_3
+-    if-ge v6, v2, :cond_3
++    if-ge v6, v2, :cond_4
+ 
+     .line 211
+     sget-object v7, Lcom/lge/camera/device/angle/CameraIdProperties;->sOptic2PhysicalCameraIds:Ljava/util/ArrayList;
+@@ -3047,7 +3100,7 @@
+     goto :goto_3
+ 
+     .line 213
+-    :cond_3
++    :cond_4
+     sget-object v2, Lcom/lge/camera/device/angle/CameraIdProperties;->sOpticPhysicalCameraIdMap:Ljava/util/HashMap;
+ 
+     invoke-static {v1}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+@@ -3096,19 +3149,15 @@
+     invoke-static {v1, v2}, Lcom/lge/camera/util/CamLog;->d(Ljava/lang/String;Ljava/lang/String;)V
+ 
+     .line 218
+-    :cond_4
++    :cond_5
+     sget v1, Lcom/lge/camera/constants/ConfigurationUtil;->sOPTIC_ZOOM_SUPPORTED:I
+ 
+     const/4 v2, 0x4
+ 
+-    if-ne v1, v2, :cond_8
++    if-ne v1, v2, :cond_9
+ 
+     .line 219
+-    sget-object v1, Lcom/lge/camera/device/angle/CameraIdProperties;->sCameraIdMap:Ljava/util/HashMap;
+-
+-    invoke-virtual {v1}, Ljava/util/HashMap;->size()I
+-
+-    move-result v1
++    const/16 v1, 0x8
+ 
+     .line 220
+     invoke-static {v1}, Lcom/lge/camera/constants/CameraConstants;->setTripleZoomCameraId(I)V
+@@ -3146,7 +3195,7 @@
+     .line 224
+     sget-object p0, Lcom/lge/camera/constants/ConfigurationUtil;->sTRIPLE_OPTIC_ZOOM_PHYSICAL_CAM_IDS:[Ljava/lang/String;
+ 
+-    if-eqz p0, :cond_5
++    if-eqz p0, :cond_6
+ 
+     .line 225
+     sget-object p0, Lcom/lge/camera/constants/ConfigurationUtil;->sTRIPLE_OPTIC_ZOOM_PHYSICAL_CAM_IDS:[Ljava/lang/String;
+@@ -3154,7 +3203,7 @@
+     array-length p0, p0
+ 
+     :goto_4
+-    if-ge v4, p0, :cond_6
++    if-ge v4, p0, :cond_7
+ 
+     .line 227
+     sget-object v2, Lcom/lge/camera/constants/ConfigurationUtil;->sTRIPLE_OPTIC_ZOOM_PHYSICAL_CAM_IDS:[Ljava/lang/String;
+@@ -3198,7 +3247,7 @@
+     goto :goto_4
+ 
+     .line 232
+-    :cond_5
++    :cond_6
+     sget-object p0, Lcom/lge/camera/device/angle/CameraIdProperties;->sOpticTripleCameraIds:Ljava/util/ArrayList;
+ 
+     const/4 v2, 0x2
+@@ -3237,7 +3286,7 @@
+     invoke-static {p0, v2}, Lcom/lge/camera/util/CamLog;->d(Ljava/lang/String;Ljava/lang/String;)V
+ 
+     .line 237
+-    :cond_6
++    :cond_7
+     sget-object p0, Lcom/lge/camera/device/angle/CameraIdProperties;->sOpticPhysicalCameraIdMap:Ljava/util/HashMap;
+ 
+     invoke-static {v1}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+@@ -3253,12 +3302,12 @@
+ 
+     move-result p0
+ 
+-    if-eqz p0, :cond_7
++    if-eqz p0, :cond_8
+ 
+     .line 239
+     sput v5, Lcom/lge/camera/constants/CameraConstants;->FRONT_CAMERA_OPTIC_FAKE:I
+ 
+-    :cond_7
++    :cond_8
+     const-string p0, "CameraApp"
+ 
+     .line 241
+@@ -3299,7 +3348,7 @@
+     .catchall {:try_start_6 .. :try_end_6} :catchall_0
+ 
+     .line 247
+-    :cond_8
++    :cond_9
+     :goto_5
+     monitor-exit v0
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/device/api2/BuilderSet.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/device/api2/BuilderSet.smali
+index 7ab9820..4a53ffe 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/device/api2/BuilderSet.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/device/api2/BuilderSet.smali
+@@ -8,7 +8,7 @@
+ 
+ .field public static final PREVIEW_SOLUTION_MAX_FRAME_CNT:I = 0x1
+ 
+-.field public static final USE_MANUAL_EXPOSURE:Z = false
++.field public static final USE_MANUAL_EXPOSURE:Z
+ 
+ 
+ # instance fields
+diff --git a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/device/api2/CameraOperationMode.smali b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/device/api2/CameraOperationMode.smali
+index b2f847b..396962d 100644
+--- a/camera_analysis/lgcamera_stock_code/smali/com/lge/camera/device/api2/CameraOperationMode.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/device/api2/CameraOperationMode.smali
+@@ -240,7 +240,7 @@
+ 
+     move-result-object v1
+ 
+-    const v3, 0xe900
++    const v3, 0xe000
+ 
+     invoke-static {v3}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+ 
+@@ -257,6 +257,12 @@
+ 
+     move-result-object v1
+ 
++    const v3, 0xe900
++
++    invoke-static {v3}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
++
++    move-result-object v3
++
+     invoke-virtual {v0, v1, v3}, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+ 
+     .line 83

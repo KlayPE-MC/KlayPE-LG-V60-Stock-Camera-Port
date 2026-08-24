@@ -1,0 +1,976 @@
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/device/focus/FocusFace.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/device/focus/FocusFace.smali
+index f693037..71bf25b 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/device/focus/FocusFace.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/device/focus/FocusFace.smali
+@@ -18,7 +18,7 @@
+ 
+ .field public static final RESET_FACE_DELAY:I = 0x1f4
+ 
+-.field protected static sFaceDetectionStarted:Z = false
++.field protected static sFaceDetectionStarted:Z
+ 
+ 
+ # instance fields
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/device/manual/ManualAudioViewMgr.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/device/manual/ManualAudioViewMgr.smali
+index 9393050..12f34b3 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/device/manual/ManualAudioViewMgr.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/device/manual/ManualAudioViewMgr.smali
+@@ -92,7 +92,7 @@
+ 
+ .field protected mAudioLevelMeterRight:Lcom/lge/camera/components/AudioLevelMeter;
+ 
+-.field protected mAudioManager:Landroid/media/AudioManagerEx;
++.field protected mAudioManager:Landroid/media/AudioManager;
+ 
+ .field protected mAudioPhoneGainBtn:Landroid/view/View;
+ 
+@@ -208,7 +208,7 @@
+     iput-object v0, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioLevelMeterRight:Lcom/lge/camera/components/AudioLevelMeter;
+ 
+     .line 212
+-    iput-object v0, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManagerEx;
++    iput-object v0, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManager;
+ 
+     .line 214
+     iput-object v0, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mBluetoothAdapter:Landroid/bluetooth/BluetoothAdapter;
+@@ -2564,9 +2564,9 @@
+ 
+     move-result-object v0
+ 
+-    check-cast v0, Landroid/media/AudioManagerEx;
++    check-cast v0, Landroid/media/AudioManager;
+ 
+-    iput-object v0, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManagerEx;
++    iput-object v0, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManager;
+ 
+     .line 1730
+     invoke-virtual {p0}, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->initializeAudioParameters()V
+@@ -2688,7 +2688,7 @@
+     .locals 2
+ 
+     .line 808
+-    iget-object p0, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManagerEx;
++    iget-object p0, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManager;
+ 
+     const/4 v0, 0x0
+ 
+@@ -2700,7 +2700,7 @@
+     const/4 v1, 0x3
+ 
+     .line 811
+-    invoke-virtual {p0, v1}, Landroid/media/AudioManagerEx;->getDevicesForStream(I)I
++    invoke-virtual {p0, v1}, Landroid/media/AudioManager;->getDevicesForStream(I)I
+ 
+     move-result p0
+ 
+@@ -3428,14 +3428,14 @@
+     iput v1, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mFpsType:I
+ 
+     .line 957
+-    iget-object p1, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManagerEx;
++    iget-object p1, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManager;
+ 
+     if-eqz p1, :cond_4
+ 
+     const-string p2, "ssrOn"
+ 
+     .line 958
+-    invoke-virtual {p1, p2}, Landroid/media/AudioManagerEx;->getParameters(Ljava/lang/String;)Ljava/lang/String;
++    invoke-virtual {p1, p2}, Landroid/media/AudioManager;->getParameters(Ljava/lang/String;)Ljava/lang/String;
+ 
+     move-result-object p1
+ 
+@@ -3616,7 +3616,7 @@
+     invoke-virtual {p0, v0}, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->setBluetoothSco(Z)V
+ 
+     .line 891
+-    iput-object v1, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManagerEx;
++    iput-object v1, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManager;
+ 
+     .line 893
+     invoke-direct {p0}, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->releaseBTServiceListener()V
+@@ -4711,7 +4711,7 @@
+     .locals 2
+ 
+     .line 511
+-    iget-object p0, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManagerEx;
++    iget-object p0, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManager;
+ 
+     if-eqz p0, :cond_0
+ 
+@@ -4732,7 +4732,7 @@
+ 
+     move-result-object v0
+ 
+-    invoke-virtual {p0, v0}, Landroid/media/AudioManagerEx;->setParameters(Ljava/lang/String;)V
++    invoke-virtual {p0, v0}, Landroid/media/AudioManager;->setParameters(Ljava/lang/String;)V
+ 
+     .line 513
+     new-instance p0, Ljava/lang/StringBuilder;
+@@ -5079,7 +5079,7 @@
+     .locals 4
+ 
+     .line 618
+-    iget-object v0, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManagerEx;
++    iget-object v0, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManager;
+ 
+     if-nez v0, :cond_0
+ 
+@@ -5124,9 +5124,9 @@
+     invoke-static {v0, p1}, Lcom/lge/camera/util/CamLog;->d(Ljava/lang/String;Ljava/lang/String;)V
+ 
+     .line 638
+-    iget-object p0, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManagerEx;
++    iget-object p0, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManager;
+ 
+-    invoke-virtual {p0}, Landroid/media/AudioManagerEx;->startBluetoothSco()V
++    invoke-virtual {p0}, Landroid/media/AudioManager;->startBluetoothSco()V
+ 
+     goto :goto_0
+ 
+@@ -5142,9 +5142,9 @@
+     invoke-static {v0, p1}, Lcom/lge/camera/util/CamLog;->d(Ljava/lang/String;Ljava/lang/String;)V
+ 
+     .line 642
+-    iget-object p1, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManagerEx;
++    iget-object p1, p0, Lcom/lge/camera/device/manual/ManualAudioViewMgr;->mAudioManager:Landroid/media/AudioManager;
+ 
+-    invoke-virtual {p1}, Landroid/media/AudioManagerEx;->stopBluetoothSco()V
++    invoke-virtual {p1}, Landroid/media/AudioManager;->stopBluetoothSco()V
+ 
+     const/4 p1, 0x0
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/device/manual/ManualSettingUtil.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/device/manual/ManualSettingUtil.smali
+index e344afb..ed7de27 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/device/manual/ManualSettingUtil.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/device/manual/ManualSettingUtil.smali
+@@ -2181,6 +2181,14 @@
+ 
+     if-nez v8, :cond_6
+ 
++    sget-object p0, Lcom/lge/camera/device/manual/ManualSettingUtil;->sSupportedVideoSizeList:Ljava/util/ArrayList;
++
++    invoke-virtual {p0}, Ljava/util/ArrayList;->isEmpty()Z
++
++    move-result p0
++
++    if-nez p0, :cond_6
++
+     .line 334
+     sget-object p0, Lcom/lge/camera/device/manual/ManualSettingUtil;->sSupportedVideoSizeList:Ljava/util/ArrayList;
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/dialog/initGuide/InitGuideMgr.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/dialog/initGuide/InitGuideMgr.smali
+index 413a021..2f4501c 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/dialog/initGuide/InitGuideMgr.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/dialog/initGuide/InitGuideMgr.smali
+@@ -14,7 +14,7 @@
+ 
+ .field public static final INIT_INDEX_BOTTOM_MARGIN_PORTRAIT_MAX_SCREEN:F = 0.08946f
+ 
+-.field private static sIsTextHidden:Z = false
++.field private static sIsTextHidden:Z
+ 
+ 
+ # instance fields
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/file/heifwriter/HeifEncoder$SurfaceEOSTracker.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/file/heifwriter/HeifEncoder$SurfaceEOSTracker.smali
+index 1be9e24..f4661c9 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/file/heifwriter/HeifEncoder$SurfaceEOSTracker.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/file/heifwriter/HeifEncoder$SurfaceEOSTracker.smali
+@@ -15,7 +15,7 @@
+ 
+ 
+ # static fields
+-.field private static final DEBUG_EOS:Z = false
++.field private static final DEBUG_EOS:Z
+ 
+ 
+ # instance fields
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/gl/component/focus/GLFocusResizable.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/gl/component/focus/GLFocusResizable.smali
+index b244f60..d66bc07 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/gl/component/focus/GLFocusResizable.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/gl/component/focus/GLFocusResizable.smali
+@@ -4,7 +4,7 @@
+ 
+ 
+ # static fields
+-.field private static final DBG:Z = false
++.field private static final DBG:Z
+ 
+ 
+ # instance fields
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/gl/component/seekbar/GLBarBase.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/gl/component/seekbar/GLBarBase.smali
+index 2cfcde0..96b013b 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/gl/component/seekbar/GLBarBase.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/gl/component/seekbar/GLBarBase.smali
+@@ -553,6 +553,13 @@
+     .line 106
+     iget p2, p0, Lcom/lge/camera/gl/component/seekbar/GLBarBase;->mMaxStep:I
+ 
++    if-nez p2, :cond_0
++
++    const/4 p2, 0x1
++
++    iput p2, p0, Lcom/lge/camera/gl/component/seekbar/GLBarBase;->mMaxStep:I
++
++    :cond_0
+     rem-int p3, p1, p2
+ 
+     sub-int/2addr p1, p3
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/gl/glbase/GLPosParam.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/gl/glbase/GLPosParam.smali
+index c8ac405..6b1d276 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/gl/glbase/GLPosParam.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/gl/glbase/GLPosParam.smali
+@@ -14,7 +14,7 @@
+ 
+ 
+ # static fields
+-.field public static final DBG:Z = false
++.field public static final DBG:Z
+ 
+ 
+ # instance fields
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/gl/utils/lottie/LottieConsts.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/gl/utils/lottie/LottieConsts.smali
+index 4105395..bdedce4 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/gl/utils/lottie/LottieConsts.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/gl/utils/lottie/LottieConsts.smali
+@@ -4,7 +4,7 @@
+ 
+ 
+ # static fields
+-.field public static final DBG:Z = false
++.field public static final DBG:Z
+ 
+ 
+ # direct methods
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/settings/ModePrefMaker.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/settings/ModePrefMaker.smali
+index e0f1190..9b5a9af 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/settings/ModePrefMaker.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/settings/ModePrefMaker.smali
+@@ -4,11 +4,11 @@
+ 
+ 
+ # static fields
+-.field private static TEMP_CONFIG_FOR_DEMO:Z = false
++.field private static TEMP_CONFIG_FOR_DEMO:Z
+ 
+-.field private static mIsMoreContain:Z = false
++.field private static mIsMoreContain:Z
+ 
+-.field private static mIsVideoModeContain:Z = false
++.field private static mIsVideoModeContain:Z
+ 
+ 
+ # direct methods
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/settings/SettingActivity.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/settings/SettingActivity.smali
+index 3b8a200..7ff228b 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/settings/SettingActivity.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/settings/SettingActivity.smali
+@@ -85,7 +85,7 @@
+ 
+ .field private mDropdownWindow:Landroid/widget/PopupWindow;
+ 
+-.field private mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++.field private mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+ .field public mFrontSetting:Lcom/lge/camera/settings/Setting;
+ 
+@@ -174,7 +174,7 @@
+     iput-object v0, p0, Lcom/lge/camera/settings/SettingActivity;->mToolbar:Landroid/widget/Toolbar;
+ 
+     .line 108
+-    iput-object v0, p0, Lcom/lge/camera/settings/SettingActivity;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iput-object v0, p0, Lcom/lge/camera/settings/SettingActivity;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+     const/4 v1, 0x1
+ 
+@@ -6165,9 +6165,9 @@
+ 
+     move-result-object p1
+ 
+-    check-cast p1, Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    check-cast p1, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+-    iput-object p1, p0, Lcom/lge/camera/settings/SettingActivity;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iput-object p1, p0, Lcom/lge/camera/settings/SettingActivity;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+     if-eqz p1, :cond_1
+ 
+@@ -6178,17 +6178,17 @@
+ 
+     move-result-object v3
+ 
+-    invoke-virtual {p1, v3}, Lcom/lge/lgdynamicactionbar/AppBarLayout;->setAppBarTitle(Ljava/lang/String;)V
++    invoke-virtual {p1, v3}, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;->setAppBarTitle(Ljava/lang/String;)V
+ 
+     .line 203
+-    iget-object p1, p0, Lcom/lge/camera/settings/SettingActivity;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iget-object p1, p0, Lcom/lge/camera/settings/SettingActivity;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+-    invoke-virtual {p1, v2}, Lcom/lge/lgdynamicactionbar/AppBarLayout;->setAppBarGone(Z)V
++    invoke-virtual {p1, v2}, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;->setAppBarGone(Z)V
+ 
+     .line 204
+-    iget-object p1, p0, Lcom/lge/camera/settings/SettingActivity;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iget-object p1, p0, Lcom/lge/camera/settings/SettingActivity;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+-    invoke-virtual {p1, v2}, Lcom/lge/lgdynamicactionbar/AppBarLayout;->setExpanded(Z)V
++    invoke-virtual {p1, v2}, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;->setExpanded(Z)V
+ 
+     .line 206
+     :cond_1
+@@ -6898,7 +6898,7 @@
+     .locals 2
+ 
+     .line 1005
+-    iget-object v0, p0, Lcom/lge/camera/settings/SettingActivity;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iget-object v0, p0, Lcom/lge/camera/settings/SettingActivity;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+     if-eqz v0, :cond_0
+ 
+@@ -6909,7 +6909,7 @@
+ 
+     move-result-object p0
+ 
+-    invoke-virtual {v0, p0}, Lcom/lge/lgdynamicactionbar/AppBarLayout;->setAppBarTitle(Ljava/lang/String;)V
++    invoke-virtual {v0, p0}, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;->setAppBarTitle(Ljava/lang/String;)V
+ 
+     :cond_0
+     return-void
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/settings/SettingCtx.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/settings/SettingCtx.smali
+index e2ac794..fb042d8 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/settings/SettingCtx.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/settings/SettingCtx.smali
+@@ -7,11 +7,11 @@
+ 
+ 
+ # static fields
+-.field protected static sCurPrefGroup:Lcom/lge/camera/settings/PreferenceGroup; = null
++.field protected static sCurPrefGroup:Lcom/lge/camera/settings/PreferenceGroup;
+ 
+-.field protected static sFrontPrefGroup:Lcom/lge/camera/settings/PreferenceGroup; = null
++.field protected static sFrontPrefGroup:Lcom/lge/camera/settings/PreferenceGroup;
+ 
+-.field public static sLoadSettingDone:Z = false
++.field public static sLoadSettingDone:Z
+ 
+ .field protected static sRearPrefGroup:Lcom/lge/camera/settings/PreferenceGroup;
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/settings/SettingFragment.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/settings/SettingFragment.smali
+index 75107a8..f848215 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/settings/SettingFragment.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/settings/SettingFragment.smali
+@@ -30,7 +30,7 @@
+ 
+ .field protected mDescrpiton:Ljava/lang/String;
+ 
+-.field protected mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++.field protected mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+ .field protected mFragmentInterface:Lcom/lge/camera/settings/SettingFragment$FragmentInterface;
+ 
+@@ -67,7 +67,7 @@
+     iput-object v0, p0, Lcom/lge/camera/settings/SettingFragment;->mToolbar:Landroid/widget/Toolbar;
+ 
+     .line 44
+-    iput-object v0, p0, Lcom/lge/camera/settings/SettingFragment;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iput-object v0, p0, Lcom/lge/camera/settings/SettingFragment;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+     .line 46
+     iput-object v0, p0, Lcom/lge/camera/settings/SettingFragment;->mActivity:Lcom/lge/camera/settings/SettingActivity;
+@@ -432,26 +432,26 @@
+ 
+     move-result-object p2
+ 
+-    check-cast p2, Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    check-cast p2, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+-    iput-object p2, p0, Lcom/lge/camera/settings/SettingFragment;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iput-object p2, p0, Lcom/lge/camera/settings/SettingFragment;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+     if-eqz p2, :cond_2
+ 
+     .line 110
+     iget-object v0, p0, Lcom/lge/camera/settings/SettingFragment;->mTitle:Ljava/lang/String;
+ 
+-    invoke-virtual {p2, v0}, Lcom/lge/lgdynamicactionbar/AppBarLayout;->setAppBarTitle(Ljava/lang/String;)V
++    invoke-virtual {p2, v0}, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;->setAppBarTitle(Ljava/lang/String;)V
+ 
+     .line 111
+-    iget-object p2, p0, Lcom/lge/camera/settings/SettingFragment;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iget-object p2, p0, Lcom/lge/camera/settings/SettingFragment;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+-    invoke-virtual {p2, p3}, Lcom/lge/lgdynamicactionbar/AppBarLayout;->setAppBarGone(Z)V
++    invoke-virtual {p2, p3}, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;->setAppBarGone(Z)V
+ 
+     .line 112
+-    iget-object p2, p0, Lcom/lge/camera/settings/SettingFragment;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iget-object p2, p0, Lcom/lge/camera/settings/SettingFragment;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+-    invoke-virtual {p2, p3}, Lcom/lge/lgdynamicactionbar/AppBarLayout;->setExpanded(Z)V
++    invoke-virtual {p2, p3}, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;->setExpanded(Z)V
+ 
+     .line 114
+     :cond_2
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/settings/SettingHelpFragment.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/settings/SettingHelpFragment.smali
+index 864e57b..598a7b4 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/settings/SettingHelpFragment.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/settings/SettingHelpFragment.smali
+@@ -6,7 +6,7 @@
+ # instance fields
+ .field private mContext:Landroid/content/Context;
+ 
+-.field private mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++.field private mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+ .field protected mFragmentInterface:Lcom/lge/camera/settings/SettingFragment$FragmentInterface;
+ 
+@@ -35,7 +35,7 @@
+     iput-object v0, p0, Lcom/lge/camera/settings/SettingHelpFragment;->mToolbar:Landroid/widget/Toolbar;
+ 
+     .line 32
+-    iput-object v0, p0, Lcom/lge/camera/settings/SettingHelpFragment;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iput-object v0, p0, Lcom/lge/camera/settings/SettingHelpFragment;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+     .line 34
+     iput-object v0, p0, Lcom/lge/camera/settings/SettingHelpFragment;->mContext:Landroid/content/Context;
+@@ -194,26 +194,26 @@
+ 
+     move-result-object p2
+ 
+-    check-cast p2, Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    check-cast p2, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+-    iput-object p2, p0, Lcom/lge/camera/settings/SettingHelpFragment;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iput-object p2, p0, Lcom/lge/camera/settings/SettingHelpFragment;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+     if-eqz p2, :cond_1
+ 
+     .line 62
+     iget-object v0, p0, Lcom/lge/camera/settings/SettingHelpFragment;->mTitle:Ljava/lang/String;
+ 
+-    invoke-virtual {p2, v0}, Lcom/lge/lgdynamicactionbar/AppBarLayout;->setAppBarTitle(Ljava/lang/String;)V
++    invoke-virtual {p2, v0}, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;->setAppBarTitle(Ljava/lang/String;)V
+ 
+     .line 63
+-    iget-object p2, p0, Lcom/lge/camera/settings/SettingHelpFragment;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iget-object p2, p0, Lcom/lge/camera/settings/SettingHelpFragment;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+-    invoke-virtual {p2, p3}, Lcom/lge/lgdynamicactionbar/AppBarLayout;->setAppBarGone(Z)V
++    invoke-virtual {p2, p3}, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;->setAppBarGone(Z)V
+ 
+     .line 64
+-    iget-object p2, p0, Lcom/lge/camera/settings/SettingHelpFragment;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iget-object p2, p0, Lcom/lge/camera/settings/SettingHelpFragment;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+-    invoke-virtual {p2, p3}, Lcom/lge/lgdynamicactionbar/AppBarLayout;->setExpanded(Z)V
++    invoke-virtual {p2, p3}, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;->setExpanded(Z)V
+ 
+     .line 66
+     :cond_1
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/settings/SettingSelectToggleFragment.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/settings/SettingSelectToggleFragment.smali
+index e750f2f..bfb2f20 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/settings/SettingSelectToggleFragment.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/settings/SettingSelectToggleFragment.smali
+@@ -635,31 +635,31 @@
+ 
+     move-result-object p2
+ 
+-    check-cast p2, Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    check-cast p2, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+-    iput-object p2, p0, Lcom/lge/camera/settings/SettingSelectToggleFragment;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iput-object p2, p0, Lcom/lge/camera/settings/SettingSelectToggleFragment;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+     .line 94
+-    iget-object p2, p0, Lcom/lge/camera/settings/SettingSelectToggleFragment;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iget-object p2, p0, Lcom/lge/camera/settings/SettingSelectToggleFragment;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+     if-eqz p2, :cond_3
+ 
+     .line 95
+-    iget-object p2, p0, Lcom/lge/camera/settings/SettingSelectToggleFragment;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iget-object p2, p0, Lcom/lge/camera/settings/SettingSelectToggleFragment;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+     iget-object v2, p0, Lcom/lge/camera/settings/SettingSelectToggleFragment;->mTitle:Ljava/lang/String;
+ 
+-    invoke-virtual {p2, v2}, Lcom/lge/lgdynamicactionbar/AppBarLayout;->setAppBarTitle(Ljava/lang/String;)V
++    invoke-virtual {p2, v2}, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;->setAppBarTitle(Ljava/lang/String;)V
+ 
+     .line 96
+-    iget-object p2, p0, Lcom/lge/camera/settings/SettingSelectToggleFragment;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iget-object p2, p0, Lcom/lge/camera/settings/SettingSelectToggleFragment;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+-    invoke-virtual {p2, p3}, Lcom/lge/lgdynamicactionbar/AppBarLayout;->setAppBarGone(Z)V
++    invoke-virtual {p2, p3}, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;->setAppBarGone(Z)V
+ 
+     .line 97
+-    iget-object p2, p0, Lcom/lge/camera/settings/SettingSelectToggleFragment;->mDynamicActionBar:Lcom/lge/lgdynamicactionbar/AppBarLayout;
++    iget-object p2, p0, Lcom/lge/camera/settings/SettingSelectToggleFragment;->mDynamicActionBar:Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;
+ 
+-    invoke-virtual {p2, p3}, Lcom/lge/lgdynamicactionbar/AppBarLayout;->setExpanded(Z)V
++    invoke-virtual {p2, p3}, Lcom/lge/camera/compat/lgdynamicactionbar/AppBarLayout;->setExpanded(Z)V
+ 
+     .line 99
+     :cond_3
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/state/InstanceMgr.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/state/InstanceMgr.smali
+index e77bb79..47dada4 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/state/InstanceMgr.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/state/InstanceMgr.smali
+@@ -4,7 +4,7 @@
+ 
+ 
+ # static fields
+-.field protected static final DBG:Z = false
++.field protected static final DBG:Z
+ 
+ .field public static mSync:Ljava/lang/Object;
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/systeminput/BootCompleteReceiver.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/systeminput/BootCompleteReceiver.smali
+index 5686d51..3dd75ad 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/systeminput/BootCompleteReceiver.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/systeminput/BootCompleteReceiver.smali
+@@ -288,9 +288,9 @@
+     invoke-virtual {v0, v1, v2}, Landroid/content/Intent;->setClassName(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
+ 
+     .line 66
+-    invoke-virtual {p1, v0}, Landroid/content/Context;->startService(Landroid/content/Intent;)Landroid/content/ComponentName;
++    nop
+ 
+-    const-string v0, "startService"
++    const-string v0, "BoostService skipped on AOSP"
+ 
+     .line 67
+     invoke-static {p2, v0}, Lcom/lge/camera/util/CamLog;->d(Ljava/lang/String;Ljava/lang/String;)V
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/systeminput/MediaMountStateReceiver.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/systeminput/MediaMountStateReceiver.smali
+index 32b5a8a..8caf48e 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/systeminput/MediaMountStateReceiver.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/systeminput/MediaMountStateReceiver.smali
+@@ -4,7 +4,7 @@
+ 
+ 
+ # static fields
+-.field static sIsAfterShutdown:Z = false
++.field static sIsAfterShutdown:Z
+ 
+ 
+ # direct methods
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/systeminput/OrientationManager.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/systeminput/OrientationManager.smali
+index 59dac6d..72bca2d 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/systeminput/OrientationManager.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/systeminput/OrientationManager.smali
+@@ -448,117 +448,8 @@
+ .end method
+ 
+ .method private showExternalDisplayProjectionToast(I)V
+-    .locals 4
+-
+-    .line 313
+-    iget-object v0, p0, Lcom/lge/camera/systeminput/OrientationManager;->mInf:Lcom/lge/camera/systeminput/OrientationManager$OrientationChangedListener;
+-
+-    invoke-interface {v0}, Lcom/lge/camera/systeminput/OrientationManager$OrientationChangedListener;->getSCInf()Lcom/lge/camera/app/ShotCtxInf;
+-
+-    move-result-object v0
+-
+-    invoke-interface {v0}, Lcom/lge/camera/app/ShotCtxInf;->getActCtx()Landroid/content/Context;
+-
+-    move-result-object v0
+-
+-    .line 314
+-    invoke-static {}, Landroid/view/SurfaceControl;->getPhysicalDisplayIds()[J
+-
+-    move-result-object v1
+-
+-    const-string v2, "CameraApp"
+-
+-    if-nez v1, :cond_0
+-
+-    const-string p0, "physicalDisplayIds array is null"
+-
+-    .line 316
+-    invoke-static {v2, p0}, Lcom/lge/camera/util/CamLog;->w(Ljava/lang/String;Ljava/lang/String;)V
+-
+-    return-void
+-
+-    .line 319
+-    :cond_0
+-    invoke-static {v0}, Lcom/lge/camera/util/Utils;->isDesktopModeConnected(Landroid/content/Context;)Z
+-
+-    move-result v3
+-
+-    if-eqz v3, :cond_1
+-
+-    const-string p0, "return, desktop mode is connected"
+-
+-    .line 320
+-    invoke-static {v2, p0}, Lcom/lge/camera/util/CamLog;->d(Ljava/lang/String;Ljava/lang/String;)V
+-
+-    return-void
+-
+-    .line 327
+-    :cond_1
+-    array-length v1, v1
+-
+-    if-lez v1, :cond_3
+-
+-    const-string v1, "display"
+-
+-    .line 328
+-    invoke-virtual {v0, v1}, Landroid/content/Context;->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
+-
+-    move-result-object v0
+-
+-    check-cast v0, Landroid/hardware/display/DisplayManager;
+-
+-    const-string v1, "android.hardware.display.category.PRESENTATION"
+-
+-    .line 329
+-    invoke-virtual {v0, v1}, Landroid/hardware/display/DisplayManager;->getDisplays(Ljava/lang/String;)[Landroid/view/Display;
+-
+-    move-result-object v0
+-
+-    if-nez v0, :cond_2
+-
+-    const-string p0, "display array is null"
+-
+-    .line 331
+-    invoke-static {v2, p0}, Lcom/lge/camera/util/CamLog;->w(Ljava/lang/String;Ljava/lang/String;)V
+-
+-    return-void
+-
+-    .line 337
+-    :cond_2
+-    array-length v0, v0
+-
+-    if-lez v0, :cond_3
+-
+-    if-eqz p1, :cond_3
+-
+-    .line 339
+-    iget-object p1, p0, Lcom/lge/camera/systeminput/OrientationManager;->mInf:Lcom/lge/camera/systeminput/OrientationManager$OrientationChangedListener;
+-
+-    invoke-static {p1}, Lcom/lge/camera/ui/msg/ToastMgr;->get(Lcom/lge/camera/app/CtxInf;)Lcom/lge/camera/ui/msg/ToastMgr;
+-
+-    move-result-object p1
+-
+-    iget-object p0, p0, Lcom/lge/camera/systeminput/OrientationManager;->mInf:Lcom/lge/camera/systeminput/OrientationManager$OrientationChangedListener;
+-
+-    invoke-interface {p0}, Lcom/lge/camera/systeminput/OrientationManager$OrientationChangedListener;->getSCInf()Lcom/lge/camera/app/ShotCtxInf;
+-
+-    move-result-object p0
+-
+-    invoke-interface {p0}, Lcom/lge/camera/app/ShotCtxInf;->getActCtx()Landroid/content/Context;
+-
+-    move-result-object p0
+-
+-    const v0, 0x7f10017a
+-
+-    invoke-virtual {p0, v0}, Landroid/content/Context;->getString(I)Ljava/lang/String;
+-
+-    move-result-object p0
+-
+-    const-wide/16 v0, 0x7d0
+-
+-    invoke-virtual {p1, p0, v0, v1}, Lcom/lge/camera/ui/msg/ToastMgr;->showToast(Ljava/lang/String;J)V
++    .locals 0
+ 
+-    :cond_3
+     return-void
+ .end method
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/ui/filter/FilterMgr.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/ui/filter/FilterMgr.smali
+index db67f20..5d58582 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/ui/filter/FilterMgr.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/ui/filter/FilterMgr.smali
+@@ -22,7 +22,7 @@
+ 
+ 
+ # static fields
+-.field private static final DBG:Z = false
++.field private static final DBG:Z
+ 
+ 
+ # instance fields
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/ui/shutter/GalleryBtn.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/ui/shutter/GalleryBtn.smali
+index d3031e6..932c271 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/ui/shutter/GalleryBtn.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/ui/shutter/GalleryBtn.smali
+@@ -1441,7 +1441,7 @@
+     .line 315
+     new-instance v7, Landroid/content/Intent;
+ 
+-    const-string v8, "com.android.camera.action.REVIEW"
++    const-string v8, "android.intent.action.VIEW"
+ 
+     invoke-direct {v7, v8, p1}, Landroid/content/Intent;-><init>(Ljava/lang/String;Landroid/net/Uri;)V
+ 
+@@ -1687,7 +1687,7 @@
+     .line 492
+     invoke-virtual {v0, v3}, Landroid/content/Intent;->setPackage(Ljava/lang/String;)Landroid/content/Intent;
+ 
+-    const-string v3, "com.android.camera.action.REVIEW"
++    const-string v3, "android.intent.action.VIEW"
+ 
+     .line 493
+     invoke-virtual {v0, v3}, Landroid/content/Intent;->setAction(Ljava/lang/String;)Landroid/content/Intent;
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/AppControlUtil.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/AppControlUtil.smali
+index 2cb5d3b..f469fe5 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/AppControlUtil.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/AppControlUtil.smali
+@@ -767,6 +767,10 @@
+ 
+     const/4 v0, 0x0
+ 
++    return v0
++
++    const/4 v0, 0x0
++
+     :try_start_0
+     const-string v1, "activity"
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/AppControlUtilBase.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/AppControlUtilBase.smali
+index 716430a..70a89e2 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/AppControlUtilBase.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/AppControlUtilBase.smali
+@@ -4,33 +4,33 @@
+ 
+ 
+ # static fields
+-.field private static sIsARStickerLaunched:Z = false
++.field private static sIsARStickerLaunched:Z
+ 
+-.field private static sIsArCameraActivityLaunched:Z = false
++.field private static sIsArCameraActivityLaunched:Z
+ 
+-.field private static sIsAvatarActivityLaunched:Z = false
++.field private static sIsAvatarActivityLaunched:Z
+ 
+-.field private static sIsCineshotLaunched:Z = false
++.field private static sIsCineshotLaunched:Z
+ 
+-.field private static sIsGoogleLensLaunched:Z = false
++.field private static sIsGoogleLensLaunched:Z
+ 
+-.field private static sIsGooglePlayStoreLaunched:Z = false
++.field private static sIsGooglePlayStoreLaunched:Z
+ 
+-.field private static sIsLGLensLaunched:Z = false
++.field private static sIsLGLensLaunched:Z
+ 
+-.field private static sIsPauseByHomeKey:Z = false
++.field private static sIsPauseByHomeKey:Z
+ 
+-.field private static sIsQRCodeLaunched:Z = false
++.field private static sIsQRCodeLaunched:Z
+ 
+-.field private static sIsSharedActivityLaunched:Z = false
++.field private static sIsSharedActivityLaunched:Z
+ 
+-.field private static sIsSmartworldDownloadLaunched:Z = false
++.field private static sIsSmartworldDownloadLaunched:Z
+ 
+-.field private static sIsStickerISPARAppLaunched:Z = false
++.field private static sIsStickerISPARAppLaunched:Z
+ 
+-.field private static sIsVideoLaunched:Z = false
++.field private static sIsVideoLaunched:Z
+ 
+-.field private static sIsYoutubeLaunched:Z = false
++.field private static sIsYoutubeLaunched:Z
+ 
+ 
+ # direct methods
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/AudioUtil.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/AudioUtil.smali
+index 42f22c6..5303ac6 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/AudioUtil.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/AudioUtil.smali
+@@ -4,17 +4,17 @@
+ 
+ 
+ # static fields
+-.field public static sAudioFocusChangeListener:Landroid/media/AudioManager$OnAudioFocusChangeListener; = null
++.field public static sAudioFocusChangeListener:Landroid/media/AudioManager$OnAudioFocusChangeListener;
+ 
+-.field public static sAudioFocusChangeListenerForward:Landroid/media/AudioManager$OnAudioFocusChangeListener; = null
++.field public static sAudioFocusChangeListenerForward:Landroid/media/AudioManager$OnAudioFocusChangeListener;
+ 
+-.field public static sHeadsetState:I = 0x0
++.field public static sHeadsetState:I
+ 
+-.field private static sIsCameraSoundForced:Ljava/lang/Boolean; = null
++.field private static sIsCameraSoundForced:Ljava/lang/Boolean;
+ 
+-.field public static sIsMuteNotificationStream:Z = false
++.field public static sIsMuteNotificationStream:Z
+ 
+-.field public static sIsMuteSystemStream:Z = false
++.field public static sIsMuteSystemStream:Z
+ 
+ .field private static sIsRingerSteamVibrated:Z
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/CamLog.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/CamLog.smali
+index 4af4af5..456309c 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/CamLog.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/CamLog.smali
+@@ -18,9 +18,9 @@
+ 
+ .field public static sLogOn:Z = true
+ 
+-.field private static sPrevGLHashCode:I = 0x0
++.field private static sPrevGLHashCode:I
+ 
+-.field private static sTagExceptionLogOn:Z = false
++.field private static sTagExceptionLogOn:Z
+ 
+ .field private static sUiGLHashCode:I
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/CheckStatusManager.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/CheckStatusManager.smali
+index 43958bd..d031c40 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/CheckStatusManager.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/CheckStatusManager.smali
+@@ -88,15 +88,15 @@
+ 
+ .field public static final SDM_CONTENT_URI:Landroid/net/Uri;
+ 
+-.field private static sCheckEnterKind:I = 0x0
++.field private static sCheckEnterKind:I
+ 
+-.field private static sCheckEnterOutSecure:I = 0x0
++.field private static sCheckEnterOutSecure:I
+ 
+-.field private static sEnterCheckComplete:Z = false
++.field private static sEnterCheckComplete:Z
+ 
+-.field private static sIsEnterDuringCall:Z = false
++.field private static sIsEnterDuringCall:Z
+ 
+-.field private static sIsTelephonyStateCheckSkip:Z = false
++.field private static sIsTelephonyStateCheckSkip:Z
+ 
+ 
+ # direct methods
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/IntentBroadcastUtil.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/IntentBroadcastUtil.smali
+index 95fea66..ff35b34 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/IntentBroadcastUtil.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/IntentBroadcastUtil.smali
+@@ -4,7 +4,7 @@
+ 
+ 
+ # static fields
+-.field public static sIS_CHANGE_MODE_STATUS:Z = false
++.field public static sIS_CHANGE_MODE_STATUS:Z
+ 
+ 
+ # direct methods
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/MDMUtil.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/MDMUtil.smali
+index f39c60a..bd9cc38 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/MDMUtil.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/MDMUtil.smali
+@@ -226,10 +226,8 @@
+ 
+     move-result-object v1
+ 
+-    check-cast v1, Ljava/util/ArrayList;
+-
+     .line 80
+-    invoke-virtual {v1}, Ljava/util/ArrayList;->iterator()Ljava/util/Iterator;
++    invoke-interface {v1}, Ljava/util/List;->iterator()Ljava/util/Iterator;
+ 
+     move-result-object v1
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/MemoryUtils.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/MemoryUtils.smali
+index 9bcb90f..53c5aa1 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/MemoryUtils.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/MemoryUtils.smali
+@@ -4,7 +4,7 @@
+ 
+ 
+ # static fields
+-.field public static final MEMORY_REDUCE:Z = false
++.field public static final MEMORY_REDUCE:Z
+ 
+ 
+ # direct methods
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/QuickWindowUtils.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/QuickWindowUtils.smali
+index afcc243..9e48a93 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/QuickWindowUtils.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/QuickWindowUtils.smali
+@@ -10,9 +10,9 @@
+ 
+ .field public static final WIDE_RESOLUTION_RATIO:F = 1.7777778f
+ 
+-.field private static sIsQuickWindowCameraMode:Z = false
++.field private static sIsQuickWindowCameraMode:Z
+ 
+-.field private static sIsQuickWindowCaseClosed:Z = false
++.field private static sIsQuickWindowCaseClosed:Z
+ 
+ .field private static sQuickCoverState:I
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/SecureImageUtil.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/SecureImageUtil.smali
+index 1bc3189..a736d6b 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/SecureImageUtil.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/SecureImageUtil.smali
+@@ -6,9 +6,9 @@
+ # static fields
+ .field public static final SNAP_LOCKED_NONE:I = -0x1
+ 
+-.field public static sKeyguardManager:Landroid/app/KeyguardManager; = null
++.field public static sKeyguardManager:Landroid/app/KeyguardManager;
+ 
+-.field private static sSecureCamera:Z = false
++.field private static sSecureCamera:Z
+ 
+ .field public static sSecureImageUtil:Lcom/lge/camera/util/SecureImageUtil;
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/TalkBackUtil.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/TalkBackUtil.smali
+index e0bb7f1..1d628df 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/TalkBackUtil.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/TalkBackUtil.smali
+@@ -4,7 +4,7 @@
+ 
+ 
+ # static fields
+-.field private static sIsAnnounced:Z = false
++.field private static sIsAnnounced:Z
+ 
+ 
+ # direct methods
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/Utils.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/Utils.smali
+index 0305e87..321f017 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/Utils.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/Utils.smali
+@@ -16,7 +16,7 @@
+ 
+ .field private static volatile sDefaultDisplayHeight:I = -0x1
+ 
+-.field private static volatile sDisplayValuesLoaded:Z = false
++.field private static volatile sDisplayValuesLoaded:Z
+ 
+ .field public static sSizeOfTafDp:I
+ 
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/ViewUtil.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/ViewUtil.smali
+index c7255dc..2d81c34 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/ViewUtil.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/ViewUtil.smali
+@@ -4,7 +4,7 @@
+ 
+ 
+ # static fields
+-.field public static sAccessibilityEnabled:Z = false
++.field public static sAccessibilityEnabled:Z
+ 
+ 
+ # direct methods
+diff --git a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/ldb/LdbUtil.smali b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/ldb/LdbUtil.smali
+index 335bae1..9a7c042 100644
+--- a/camera_analysis/lgcamera_stock_code/smali_classes2/com/lge/camera/util/ldb/LdbUtil.smali
++++ b/camera_analysis/lgcamera_fix37_code/smali_classes2/com/lge/camera/util/ldb/LdbUtil.smali
+@@ -45,7 +45,7 @@
+ 
+ .field private static sShutterType:Ljava/lang/String; = ""
+ 
+-.field private static sSkipNextLdbBroadcast:Z = false
++.field private static sSkipNextLdbBroadcast:Z
+ 
+ 
+ # direct methods

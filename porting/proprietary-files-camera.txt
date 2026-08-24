@@ -1,0 +1,76 @@
+# LG V60 LMV600EA V40G camera files
+#
+# LGCameraApp.apk and LGCameraSolution.apk are inputs to the scripts in this
+# kit. Do not use the unmodified APKs directly in an Android 16 build.
+
+# Applications and framework resources
+product/priv-app/LGCameraApp/LGCameraApp.apk
+system/framework/lge-res/lge-res.apk
+system_ext/priv-app/LGCameraSolution/LGCameraSolution.apk
+system_ext/framework/com.lge.camerasolution.jar
+system_ext/etc/camera_config.xml
+
+# CameraSolution and algorithm libraries
+system_ext/lib64/libLGCameraSolution-jni.so
+system_ext/lib64/libarcsoft_beauty_picselfie.so
+system_ext/lib64/libarcsoft_picselfie_algorithm.so
+system_ext/lib64/libmpbase.so
+system_ext/lib64/libarcsoft_dualcam_refocus_front.so
+system_ext/lib64/libarcsoft_dualcam_refocus_rear_t.so
+system_ext/lib64/libarcsoft_dualcam_refocus.so
+system_ext/lib64/libarcsoft_dualcam_portraitlighting.so
+system_ext/lib64/libdepthmapdecoder.arcsoft.so
+system_ext/lib64/libcvp_common.so
+system_ext/lib64/libcvp2.so
+system_ext/lib64/libcvp2_hfi.so
+system_ext/lib64/libarcsoft_makeup.so
+system_ext/lib64/libarcsoft_singlecam_portrait_lighting.so
+system_ext/lib64/libAutoContrast.so
+system_ext/lib64/libmorpho_wdr2.so
+system_ext/lib64/liblghdri.so
+system_ext/lib64/libmorpho_image_stab31.so
+system_ext/lib64/libSRIyuv.so
+system_ext/lib64/liblgsnpewsunet.so
+system_ext/lib64/libmorpho_deflicker_image.so
+system_ext/lib64/liblgsnpedeflickerclassifier.so
+system_ext/lib64/libSNPE_G.so
+system_ext/lib64/libc++_shared.so
+
+# OpenCL is sourced from the V40G vendor image and copied into system_ext by
+# the port because CameraSolution loads it from the system namespace.
+vendor/lib64/libOpenCL.so:system_ext/lib64/libOpenCL.so
+
+# Qualcomm/LG Feature2 graph implementations; keep in vendor/lib64.
+vendor/lib64/com.lge.feature2.swmf.so
+vendor/lib64/com.qti.feature2.anchorsync.so
+vendor/lib64/com.qti.feature2.demux.so
+vendor/lib64/com.qti.feature2.frameselect.so
+vendor/lib64/com.qti.feature2.fusion.so
+vendor/lib64/com.qti.feature2.hdr.so
+vendor/lib64/com.qti.feature2.memcpy.so
+vendor/lib64/com.qti.feature2.mfsr.so
+vendor/lib64/com.qti.feature2.qcfa.so
+vendor/lib64/com.qti.feature2.rawhdr.so
+vendor/lib64/com.qti.feature2.rt.so
+vendor/lib64/com.qti.feature2.serializer.so
+vendor/lib64/com.qti.feature2.stub.so
+vendor/lib64/com.qti.feature2.swmf.so
+
+# IQM models
+vendor/etc/camera/iqm/ai_checker_graph.dlc
+vendor/etc/camera/iqm/fc4_awb.dlc
+vendor/etc/camera/iqm/gender_detection_graph.dlc
+
+# LG film data
+vendor/etc/camera/film/0_film.dat
+vendor/etc/camera/film/1_film.dat
+vendor/etc/camera/film/2_film.dat
+vendor/etc/camera/film/3_film.dat
+vendor/etc/camera/film/4_film.dat
+vendor/etc/camera/film/5_film.dat
+vendor/etc/camera/film/6_film.dat
+vendor/etc/camera/film/7_film.dat
+vendor/etc/camera/film/8_film.dat
+vendor/etc/camera/film/9_film.dat
+vendor/etc/camera/film/10_film.dat
+

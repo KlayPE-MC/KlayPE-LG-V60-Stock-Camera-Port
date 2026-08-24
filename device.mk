@@ -118,7 +118,75 @@ TARGET_SCREEN_HEIGHT := 2460
 
 # Camera
 PRODUCT_PACKAGES += \
-    android.hardware.camera.provider-service.lineage
+    android.hardware.camera.provider-service.lineage \
+    LgeResourcesPort \
+    LGCameraAppPort \
+    LGCameraSolutionPort \
+    com.lge.camerasolution \
+    com.lge.camerasolution.xml \
+    lge_camera_config.xml \
+    lge-camera-compat \
+    com.lge.feature2.swmf \
+    com.qti.feature2.anchorsync \
+    com.qti.feature2.demux \
+    com.qti.feature2.frameselect \
+    com.qti.feature2.fusion \
+    com.qti.feature2.hdr \
+    com.qti.feature2.memcpy \
+    com.qti.feature2.mfsr \
+    com.qti.feature2.qcfa \
+    com.qti.feature2.rawhdr \
+    com.qti.feature2.rt \
+    com.qti.feature2.serializer \
+    com.qti.feature2.stub \
+    com.qti.feature2.swmf \
+    lge_camera_iqm_ai_checker \
+    lge_camera_iqm_fc4_awb \
+    lge_camera_iqm_gender_detection \
+    lge_camera_film_0 \
+    lge_camera_film_1 \
+    lge_camera_film_2 \
+    lge_camera_film_3 \
+    lge_camera_film_4 \
+    lge_camera_film_5 \
+    lge_camera_film_6 \
+    lge_camera_film_7 \
+    lge_camera_film_8 \
+    lge_camera_film_9 \
+    lge_camera_film_10
+
+PRODUCT_BOOT_JARS += \
+    lge-camera-compat
+
+LG_CAMERA_NATIVE_LIBS := \
+    libLGCameraSolution-jni.so \
+    libarcsoft_beauty_picselfie.so \
+    libarcsoft_picselfie_algorithm.so \
+    libmpbase.so \
+    libOpenCL.so \
+    libarcsoft_dualcam_refocus_front.so \
+    libarcsoft_dualcam_refocus_rear_t.so \
+    libarcsoft_dualcam_refocus.so \
+    libarcsoft_dualcam_portraitlighting.so \
+    libdepthmapdecoder.arcsoft.so \
+    libcvp_common.so \
+    libcvp2.so \
+    libcvp2_hfi.so \
+    libarcsoft_makeup.so \
+    libarcsoft_singlecam_portrait_lighting.so \
+    libAutoContrast.so \
+    libmorpho_wdr2.so \
+    liblghdri.so \
+    libmorpho_image_stab31.so \
+    libSRIyuv.so \
+    liblgsnpewsunet.so \
+    libmorpho_deflicker_image.so \
+    liblgsnpedeflickerclassifier.so \
+    libSNPE_G.so \
+    libc++_shared.so
+
+PRODUCT_COPY_FILES += $(foreach lib,$(LG_CAMERA_NATIVE_LIBS), \
+    device/lge/timelm/camera-lg/prebuilt/lib64/$(lib):$(TARGET_COPY_OUT_SYSTEM_EXT)/lib64/$(lib))
 
 # Configstore
 PRODUCT_PACKAGES += \

@@ -1,0 +1,74 @@
+diff --git a/services/camera/libcameraservice/device3/Camera3OutputStream.cpp b/services/camera/libcameraservice/device3/Camera3OutputStream.cpp
+index df055dbe17..02ac3b7ac8 100644
+--- a/services/camera/libcameraservice/device3/Camera3OutputStream.cpp
++++ b/services/camera/libcameraservice/device3/Camera3OutputStream.cpp
+@@ -557,6 +557,16 @@ status_t Camera3OutputStream::configureConsumerQueueLocked(bool allowPreviewResp
+         return res;
+     }
+ 
++    // Legacy vendor HAL custom modes can echo only the preview consumer usage
++    // (for example HW_TEXTURE) as their producer usage. Opaque camera output
++    // still needs a camera-writer bit so gralloc can resolve its real format.
++    if (camera_stream::format == HAL_PIXEL_FORMAT_IMPLEMENTATION_DEFINED &&
++            (mUsage & GRALLOC_USAGE_HW_CAMERA_WRITE) == 0) {
++        ALOGW("%s: Stream %d: opaque camera output usage %#" PRIx64
++                " lacks HW_CAMERA_WRITE; adding it", __FUNCTION__, mId, mUsage);
++        mUsage |= GRALLOC_USAGE_HW_CAMERA_WRITE;
++    }
++
+     res = native_window_set_usage(mConsumer.get(), mUsage);
+     if (res != OK) {
+         ALOGE("%s: Unable to configure usage %" PRIu64 " for stream %d",
+diff --git a/services/camera/libcameraservice/device3/aidl/AidlCamera3Device.cpp b/services/camera/libcameraservice/device3/aidl/AidlCamera3Device.cpp
+index eae66e8322..6e481081c8 100644
+--- a/services/camera/libcameraservice/device3/aidl/AidlCamera3Device.cpp
++++ b/services/camera/libcameraservice/device3/aidl/AidlCamera3Device.cpp
+@@ -1093,8 +1093,20 @@ status_t AidlCamera3Device::AidlHalInterface::configureStreams(
+                         __FUNCTION__, streamId);
+                 return INVALID_OPERATION;
+             }
+-            dstStream->setUsage(
+-                    mapProducerToFrameworkUsage(src.producerUsage));
++            uint64_t producerUsage = mapProducerToFrameworkUsage(src.producerUsage);
++            // Some legacy vendor HALs accept their private stream combination but
++            // return no producer usage for opaque preview streams.  Passing zero to
++            // gralloc leaves IMPLEMENTATION_DEFINED without a camera producer and
++            // can make allocation fail.  Camera output buffers are always written by
++            // the camera, so provide the missing producer bit only in that case.
++            if (producerUsage == 0 &&
++                    dstStream->getOriginalFormat() ==
++                            HAL_PIXEL_FORMAT_IMPLEMENTATION_DEFINED) {
++                producerUsage = GRALLOC_USAGE_HW_CAMERA_WRITE;
++                ALOGW("%s: Stream %d: HAL returned zero producer usage for opaque "
++                        "output; adding HW_CAMERA_WRITE", __FUNCTION__, streamId);
++            }
++            dstStream->setUsage(producerUsage);
+             dstStream->setHalBufferManager(
+                     contains(config->hal_buffer_managed_streams, streamId));
+         }
+diff --git a/services/camera/libcameraservice/device3/hidl/HidlCamera3Device.cpp b/services/camera/libcameraservice/device3/hidl/HidlCamera3Device.cpp
+index 0d54d6543d..3adf60b721 100644
+--- a/services/camera/libcameraservice/device3/hidl/HidlCamera3Device.cpp
++++ b/services/camera/libcameraservice/device3/hidl/HidlCamera3Device.cpp
+@@ -1208,8 +1208,19 @@ status_t HidlCamera3Device::HidlHalInterface::configureStreams(
+                         __FUNCTION__, streamId);
+                 return INVALID_OPERATION;
+             }
+-            dstStream->setUsage(
+-                    mapProducerToFrameworkUsage(src.v3_2.producerUsage));
++            uint64_t producerUsage =
++                    mapProducerToFrameworkUsage(src.v3_2.producerUsage);
++            // Legacy LG camera HAL custom modes may omit the producer usage for
++            // opaque preview outputs. Without a camera-writer bit, gralloc cannot
++            // resolve IMPLEMENTATION_DEFINED to an allocatable format.
++            if (producerUsage == 0 &&
++                    dstStream->getOriginalFormat() ==
++                            HAL_PIXEL_FORMAT_IMPLEMENTATION_DEFINED) {
++                producerUsage = GRALLOC_USAGE_HW_CAMERA_WRITE;
++                ALOGW("%s: Stream %d: HAL returned zero producer usage for opaque "
++                        "output; adding HW_CAMERA_WRITE", __FUNCTION__, streamId);
++            }
++            dstStream->setUsage(producerUsage);
+         }
+         dst->max_buffers = src.v3_2.maxBuffers;
+     }

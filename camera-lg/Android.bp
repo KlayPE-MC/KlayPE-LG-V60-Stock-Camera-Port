@@ -1,0 +1,322 @@
+java_library {
+    name: "lge-camera-compat",
+    srcs: ["compat/src/**/*.java"],
+    installable: true,
+    platform_apis: true,
+}
+
+// LG framework resource package required by the stock camera.  It must be
+// re-signed with the Lineage platform certificate because its manifest uses
+// android.uid.system and publishes the com.lge.resources shared library.
+android_app_import {
+    name: "LgeResourcesPort",
+    apk: "prebuilt/lge-res.apk",
+    privileged: true,
+    certificate: "platform",
+    dex_preopt: {
+        enabled: false,
+    },
+}
+
+android_app_import {
+    name: "LGCameraAppPort",
+    apk: "prebuilt/LGCameraApp.apk",
+    privileged: true,
+    certificate: "platform",
+    system_ext_specific: true,
+    dex_preopt: {
+        enabled: false,
+    },
+    enforce_uses_libs: false,
+    required: [
+        "lge_camera_hiddenapi_whitelist.xml",
+        "privapp-permissions-lge-camera.xml",
+    ],
+}
+
+android_app_import {
+    name: "LGCameraSolutionPort",
+    apk: "prebuilt/LGCameraSolution.apk",
+    privileged: true,
+    certificate: "platform",
+    system_ext_specific: true,
+    dex_preopt: {
+        enabled: false,
+    },
+    enforce_uses_libs: false,
+}
+
+dex_import {
+    name: "com.lge.camerasolution",
+    jars: ["prebuilt/com.lge.camerasolution.jar"],
+    system_ext_specific: true,
+}
+
+prebuilt_etc {
+    name: "com.lge.camerasolution.xml",
+    src: "permissions/com.lge.camerasolution.xml",
+    sub_dir: "permissions",
+    system_ext_specific: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_config.xml",
+    src: "prebuilt/camera_config.xml",
+    filename: "camera_config.xml",
+    system_ext_specific: true,
+}
+
+prebuilt_etc {
+    name: "privapp-permissions-lge-camera.xml",
+    src: "permissions/privapp-permissions-lge-camera.xml",
+    sub_dir: "permissions",
+    system_ext_specific: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_hiddenapi_whitelist.xml",
+    src: "permissions/lge_camera_hiddenapi_whitelist.xml",
+    sub_dir: "sysconfig",
+    system_ext_specific: true,
+}
+
+// LG V40G Feature2 graph implementations. The stock camera HAL dlopens these
+// names directly from /vendor/lib64. Without them the first capture request is
+// rejected with ENOSYS (-38), leaving a black preview and inert controls.
+cc_prebuilt_library_shared {
+    name: "com.lge.feature2.swmf",
+    srcs: ["prebuilt/vendor/lib64/com.lge.feature2.swmf.so"],
+    compile_multilib: "64",
+    vendor: true,
+    strip: { none: true },
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "com.qti.feature2.anchorsync",
+    srcs: ["prebuilt/vendor/lib64/com.qti.feature2.anchorsync.so"],
+    compile_multilib: "64",
+    vendor: true,
+    strip: { none: true },
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "com.qti.feature2.demux",
+    srcs: ["prebuilt/vendor/lib64/com.qti.feature2.demux.so"],
+    compile_multilib: "64",
+    vendor: true,
+    strip: { none: true },
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "com.qti.feature2.frameselect",
+    srcs: ["prebuilt/vendor/lib64/com.qti.feature2.frameselect.so"],
+    compile_multilib: "64",
+    vendor: true,
+    strip: { none: true },
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "com.qti.feature2.fusion",
+    srcs: ["prebuilt/vendor/lib64/com.qti.feature2.fusion.so"],
+    compile_multilib: "64",
+    vendor: true,
+    strip: { none: true },
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "com.qti.feature2.hdr",
+    srcs: ["prebuilt/vendor/lib64/com.qti.feature2.hdr.so"],
+    compile_multilib: "64",
+    vendor: true,
+    strip: { none: true },
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "com.qti.feature2.memcpy",
+    srcs: ["prebuilt/vendor/lib64/com.qti.feature2.memcpy.so"],
+    compile_multilib: "64",
+    vendor: true,
+    strip: { none: true },
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "com.qti.feature2.mfsr",
+    srcs: ["prebuilt/vendor/lib64/com.qti.feature2.mfsr.so"],
+    compile_multilib: "64",
+    vendor: true,
+    strip: { none: true },
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "com.qti.feature2.qcfa",
+    srcs: ["prebuilt/vendor/lib64/com.qti.feature2.qcfa.so"],
+    compile_multilib: "64",
+    vendor: true,
+    strip: { none: true },
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "com.qti.feature2.rawhdr",
+    srcs: ["prebuilt/vendor/lib64/com.qti.feature2.rawhdr.so"],
+    compile_multilib: "64",
+    vendor: true,
+    strip: { none: true },
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "com.qti.feature2.rt",
+    srcs: ["prebuilt/vendor/lib64/com.qti.feature2.rt.so"],
+    compile_multilib: "64",
+    vendor: true,
+    strip: { none: true },
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "com.qti.feature2.serializer",
+    srcs: ["prebuilt/vendor/lib64/com.qti.feature2.serializer.so"],
+    compile_multilib: "64",
+    vendor: true,
+    strip: { none: true },
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "com.qti.feature2.stub",
+    srcs: ["prebuilt/vendor/lib64/com.qti.feature2.stub.so"],
+    compile_multilib: "64",
+    vendor: true,
+    strip: { none: true },
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "com.qti.feature2.swmf",
+    srcs: ["prebuilt/vendor/lib64/com.qti.feature2.swmf.so"],
+    compile_multilib: "64",
+    vendor: true,
+    strip: { none: true },
+    check_elf_files: false,
+}
+
+prebuilt_etc {
+    name: "lge_camera_iqm_ai_checker",
+    src: "prebuilt/vendor/etc/camera/iqm/ai_checker_graph.dlc",
+    filename: "ai_checker_graph.dlc",
+    sub_dir: "camera/iqm",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_iqm_fc4_awb",
+    src: "prebuilt/vendor/etc/camera/iqm/fc4_awb.dlc",
+    filename: "fc4_awb.dlc",
+    sub_dir: "camera/iqm",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_iqm_gender_detection",
+    src: "prebuilt/vendor/etc/camera/iqm/gender_detection_graph.dlc",
+    filename: "gender_detection_graph.dlc",
+    sub_dir: "camera/iqm",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_film_0",
+    src: "prebuilt/vendor/etc/camera/film/0_film.dat",
+    filename: "0_film.dat",
+    sub_dir: "camera/film",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_film_1",
+    src: "prebuilt/vendor/etc/camera/film/1_film.dat",
+    filename: "1_film.dat",
+    sub_dir: "camera/film",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_film_2",
+    src: "prebuilt/vendor/etc/camera/film/2_film.dat",
+    filename: "2_film.dat",
+    sub_dir: "camera/film",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_film_3",
+    src: "prebuilt/vendor/etc/camera/film/3_film.dat",
+    filename: "3_film.dat",
+    sub_dir: "camera/film",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_film_4",
+    src: "prebuilt/vendor/etc/camera/film/4_film.dat",
+    filename: "4_film.dat",
+    sub_dir: "camera/film",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_film_5",
+    src: "prebuilt/vendor/etc/camera/film/5_film.dat",
+    filename: "5_film.dat",
+    sub_dir: "camera/film",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_film_6",
+    src: "prebuilt/vendor/etc/camera/film/6_film.dat",
+    filename: "6_film.dat",
+    sub_dir: "camera/film",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_film_7",
+    src: "prebuilt/vendor/etc/camera/film/7_film.dat",
+    filename: "7_film.dat",
+    sub_dir: "camera/film",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_film_8",
+    src: "prebuilt/vendor/etc/camera/film/8_film.dat",
+    filename: "8_film.dat",
+    sub_dir: "camera/film",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_film_9",
+    src: "prebuilt/vendor/etc/camera/film/9_film.dat",
+    filename: "9_film.dat",
+    sub_dir: "camera/film",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "lge_camera_film_10",
+    src: "prebuilt/vendor/etc/camera/film/10_film.dat",
+    filename: "10_film.dat",
+    sub_dir: "camera/film",
+    vendor: true,
+}

@@ -1,0 +1,31 @@
+diff --git a/camera_analysis/lgsolution_stock_code/smali/android/support/v4/view/ViewPager.smali b/camera_analysis/lgsolution_port_code/smali/android/support/v4/view/ViewPager.smali
+index ed3acf7..fa9917e 100644
+--- a/camera_analysis/lgsolution_stock_code/smali/android/support/v4/view/ViewPager.smali
++++ b/camera_analysis/lgsolution_port_code/smali/android/support/v4/view/ViewPager.smali
+@@ -64,7 +64,7 @@
+ 
+ .field private static final TAG:Ljava/lang/String; = "ViewPager"
+ 
+-.field private static final USE_CACHE:Z = false
++.field private static final USE_CACHE:Z
+ 
+ .field private static final sInterpolator:Landroid/view/animation/Interpolator;
+ 
+diff --git a/camera_analysis/lgsolution_stock_code/smali/com/lge/camerasolution/service/CameraSolutionServiceImpl.smali b/camera_analysis/lgsolution_port_code/smali/com/lge/camerasolution/service/CameraSolutionServiceImpl.smali
+index ad4091a..9065ab0 100644
+--- a/camera_analysis/lgsolution_stock_code/smali/com/lge/camerasolution/service/CameraSolutionServiceImpl.smali
++++ b/camera_analysis/lgsolution_port_code/smali/com/lge/camerasolution/service/CameraSolutionServiceImpl.smali
+@@ -127,13 +127,6 @@
+ 
+     iput-object v0, p0, Lcom/lge/camerasolution/service/CameraSolutionServiceImpl;->mContext:Landroid/content/Context;
+ 
+-    .line 58
+-    const-string v0, "oem_trusted_authority"
+-
+-    const-string v1, "com.lge.camera.SpecialTypesProvider"
+-
+-    invoke-static {v0, v1}, Landroid/os/SystemProperties;->set(Ljava/lang/String;Ljava/lang/String;)V
+-
+     .line 59
+     return-void
+ .end method
