@@ -178,13 +178,6 @@ Continuous autofocus while recording at 60 fps is not claimed as fixed by
 this release. The repository intentionally reports this remaining limitation
 instead of presenting the port as fully complete.
 
-## Optional cellular signal indicator fix
-
-The tested LG RIL bridge is now published separately under [`ril-port`](ril-port/README.md).
-It translates the proprietary LG signal-strength callbacks to standard Android
-telephony while delegating the vendor radio through HIDL 1.5. It is optional
-and does not need to be enabled for the camera port.
-
 ## Attribution and third-party files
 
 Integration, compatibility code, documentation and patches are published by
