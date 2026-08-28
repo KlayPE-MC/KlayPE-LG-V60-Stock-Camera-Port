@@ -1,5 +1,18 @@
 # Port milestones
 
+## 2026-08-28 reproducibility update
+
+- Replaced the older mixed vendor override set with the exact coherent V40G
+  `camera.kona`, LG AEC/AF/AWB and `s5kgw1` tuning files tested on-device.
+- Added the final LG Camera APK with fixed 60/60 capture ranges for 1080p60
+  and 4K60. Measured output now reaches real 60 fps instead of dropping to
+  roughly 24-30 fps in low light.
+- Added deterministic reconstruction patch `0004` and a one-command tree
+  preparation script.
+- Corrected the auxiliary-camera allowlist so LG Camera sees only public IDs
+  0/1 instead of deriving the nonexistent ID 10.
+- Documented the remaining 60 fps continuous-autofocus limitation explicitly.
+
 ## Reproducible developer kit
 
 - Bundled the six-file stable vendor camera override set from the working

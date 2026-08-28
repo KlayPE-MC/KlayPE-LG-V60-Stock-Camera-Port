@@ -14,9 +14,10 @@ Maintained and tested by **KlayPE** (`KlayPE-MC`).
 - LG framework/resource compatibility classes and permissions;
 - the CameraSolution, ArcSoft, Morpho, CVP, SNPE and OpenCL libraries;
 - matching V40G Feature2 libraries, IQM models and film data;
-- the pinned stable vendor camera HAL/statistics/tuning override set;
+- the pinned, coherent V40G camera HAL/LG statistics/tuning override set;
 - the required Android camera-service compatibility patch;
-- APK reconstruction patches, verification scripts and a regression matrix.
+- APK reconstruction patches, one-command preparation, verification scripts
+  and a regression matrix.
 
 This repository intentionally contains **camera work only**. It does not
 contain the experimental RIL/signal-strength wrapper, UDFPS changes, GApps or
@@ -28,12 +29,15 @@ The reference build is LineageOS 23.2 (`BP4A`, Android 16). The tested camera
 APK has this SHA-256:
 
 ```text
-4f9ac1b8edde0f469524f8efc7bfa8f1258634b26ac6ef385be32a37a7f83f60
+011c0956961dea6dc29e79923ea8461d4b1c5f3c5dee64b949b47c32c4e87245
 ```
 
 Testing reached rear/front photography, flash, lens selection, normal video,
-8K, stabilization, timelapse, manual video and portrait. This remains an
-engineering port; run `porting/TEST_MATRIX.md` on every ROM branch and update.
+8K, stabilization, timelapse, manual video and portrait. The bundled camera
+also forces a real 60/60 capture range when 1080p60 or 4K60 is selected; the
+previous 24/60 range could produce 24-30 fps files in low light. Continuous
+autofocus at 60 fps remains under investigation. This remains an engineering
+port; run `porting/TEST_MATRIX.md` on every ROM branch and update.
 
 ## Clone
 
@@ -54,9 +58,8 @@ are already under `camera-lg/prebuilt`.
 
 ## Pin the tested vendor camera set
 
-After syncing or extracting `vendor/lge/timelm`, install the six camera files
-captured from the working `LineageOS23.2-timelm-LGCamera-FINAL-20260823`
-build:
+After syncing or extracting `vendor/lge/timelm`, install the six coherent
+camera files captured from the tested V40G configuration:
 
 ```bash
 device/lge/timelm/porting/scripts/apply-stable-camera-vendor-overrides.sh \
@@ -69,8 +72,28 @@ paths already consumed by the normal vendor makefiles, and verifies the result.
 Run it again after replacing or re-extracting the vendor tree.
 
 This avoids duplicate Soong modules and pins `camera.kona.so`, the matching
-AEC/AF/AWB components and the `s5kgw1` tuning file without importing the whole
-vendor repository.
+LG AEC/AF/AWB components and the `s5kgw1` tuning file without importing the
+whole vendor repository. Do not substitute the similarly named
+`com.qti.stats.*` files for the four `com.lge.stats.*` files in the manifest.
+
+Keep the supplied `vendor.camera.aux.packagelist` unchanged. In particular,
+do not add `com.lge.camera`: this LG HAL then exposes auxiliary IDs that make
+the application derive and query nonexistent camera ID 10.
+
+## One-command preparation
+
+After cloning this tree and syncing `vendor/lge/timelm`, run from the Android
+source root:
+
+```bash
+device/lge/timelm/porting/scripts/prepare-camera-port.sh
+```
+
+The script verifies all required artifacts, installs the exact V40G vendor
+override set with backups, applies the required `frameworks/av` patch only
+when necessary, and verifies the prepared tree. It stops on a missing file,
+wrong hash or incompatible platform patch instead of allowing a broken ROM
+build to continue.
 
 ## Required platform patch
 
@@ -131,6 +154,29 @@ service; if the context changed, port the same guarded
 Do not mix Feature2 graphs or tuning files from another LG firmware release.
 That previously caused rejected capture requests (`ENOSYS -38`), black preview
 and inert controls.
+
+## Troubleshooting known integration failures
+
+- **Black preview or buttons that do nothing:** run
+  `porting/scripts/prepare-camera-port.sh` again after every proprietary-file
+  extraction. This normally means that the APK, `camera.kona.so`, Feature2
+  tuning or LG AEC/AF/AWB components came from different firmware sets.
+- **Logcat refers to camera ID 10:** restore the exact
+  `vendor.camera.aux.packagelist` shipped in `system_ext.prop`. LG Camera must
+  not be added to that allow-list; it expects `getCameraIdList()` to expose
+  only the public IDs and opens its logical cameras explicitly.
+- **The UI says 60 fps but the recording is 24–30 fps:** confirm that the APK
+  hash passes `verify-camera-tree.sh`, then measure the output with `ffprobe`
+  as described in `porting/TEST_MATRIX.md`. Older APK revisions requested a
+  variable 24–60 range instead of fixed 60/60.
+- **The build succeeds but runtime behaviour is unchanged:** remove stale
+  product output for the camera packages, rerun the preparation script and
+  rebuild. Soong accepting the modules does not prove that the coherent
+  vendor override set reached the generated vendor image.
+
+Continuous autofocus while recording at 60 fps is not claimed as fixed by
+this release. The repository intentionally reports this remaining limitation
+instead of presenting the port as fully complete.
 
 ## Attribution and third-party files
 

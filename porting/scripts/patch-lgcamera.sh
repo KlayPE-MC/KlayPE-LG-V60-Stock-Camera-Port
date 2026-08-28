@@ -42,6 +42,8 @@ git -C "$work_dir/decoded" apply -p3 \
   "$kit_dir/apk-patches/0001-lgcamera-classes1-android16-compat.patch"
 git -C "$work_dir/decoded" apply -p3 \
   "$kit_dir/apk-patches/0002-lgcamera-classes2-modes-and-compat.patch"
+git -C "$work_dir/decoded" apply -p3 \
+  "$kit_dir/apk-patches/0004-lgcamera-fixed-60fps.patch"
 "${apktool[@]}" b "$work_dir/decoded" -o "$work_dir/LGCameraApp-unsigned.apk"
 
 cp "$work_dir/LGCameraApp-unsigned.apk" "$output_apk"

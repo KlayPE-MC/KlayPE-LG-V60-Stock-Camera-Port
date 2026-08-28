@@ -4,7 +4,10 @@ audio.offload.buffer.size.kb=32
 audio.offload.gapless.enabled=true
 
 # Camera
-vendor.camera.aux.packagelist=com.lge.camera,com.lge.cinemagraph,org.codeaurora.snapcam,com.lge.servicemenu
+# Keep LGCamera out of the auxiliary allow-list. It expects getCameraIdList()
+# to expose only public IDs 0/1 and accesses its logical IDs explicitly.
+# Exposing every auxiliary ID makes it derive and query nonexistent ID 10.
+vendor.camera.aux.packagelist=org.codeaurora.snapcam,com.android.camera
 
 # CNE
 persist.vendor.cne.feature=1

@@ -1,0 +1,55 @@
+diff --git a/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/device/api2/BuilderSet.smali b/camera_analysis/lgcamera_fixed60_code/smali/com/lge/camera/device/api2/BuilderSet.smali
+index 4a53ffe..1513c43 100644
+--- a/camera_analysis/lgcamera_fix37_code/smali/com/lge/camera/device/api2/BuilderSet.smali
++++ b/camera_analysis/lgcamera_fixed60_code/smali/com/lge/camera/device/api2/BuilderSet.smali
+@@ -6222,9 +6222,18 @@
+     .line 564
+     :cond_1
+     :goto_0
++    aget p1, v0, v3
++
++    const/16 v1, 0x3c
++
++    if-ne p1, v1, :cond_2
++
++    aput v1, v0, v2
++
++    :cond_2
+     iget-object p1, p0, Lcom/lge/camera/device/api2/BuilderSet;->mPreviewFps:Landroid/util/Range;
+ 
+-    if-eqz p1, :cond_2
++    if-eqz p1, :cond_3
+ 
+     iget-object p1, p0, Lcom/lge/camera/device/api2/BuilderSet;->mPreviewFps:Landroid/util/Range;
+ 
+@@ -6240,7 +6249,7 @@
+ 
+     aget v1, v0, v2
+ 
+-    if-ne p1, v1, :cond_2
++    if-ne p1, v1, :cond_3
+ 
+     iget-object p1, p0, Lcom/lge/camera/device/api2/BuilderSet;->mPreviewFps:Landroid/util/Range;
+ 
+@@ -6256,10 +6265,10 @@
+ 
+     aget v1, v0, v3
+ 
+-    if-eq p1, v1, :cond_3
++    if-eq p1, v1, :cond_4
+ 
+     .line 565
+-    :cond_2
++    :cond_3
+     new-instance p1, Ljava/lang/StringBuilder;
+ 
+     invoke-direct {p1}, Ljava/lang/StringBuilder;-><init>()V
+@@ -6305,7 +6314,7 @@
+ 
+     iput-object p1, p0, Lcom/lge/camera/device/api2/BuilderSet;->mPreviewFps:Landroid/util/Range;
+ 
+-    :cond_3
++    :cond_4
+     return-void
+ .end method
+ 
