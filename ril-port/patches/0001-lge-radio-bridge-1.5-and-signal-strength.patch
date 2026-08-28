@@ -1,0 +1,583 @@
+diff --git a/hidl/radio/LgeRadioResponseV2.cpp b/hidl/radio/LgeRadioResponseV2.cpp
+index c68c0e3..55286f9 100644
+--- a/hidl/radio/LgeRadioResponseV2.cpp
++++ b/hidl/radio/LgeRadioResponseV2.cpp
+@@ -8,6 +8,9 @@
+ 
+ namespace vendor::lge::hardware::radio::implementation {
+ 
++using ::android::hardware::radio::V1_0::GsmSignalStrength;
++using ::android::hardware::radio::V1_4::SignalStrength;
++
+ LgeRadioResponseV2::LgeRadioResponseV2(const sp<IRadioResponse>& radioResponse) {
+     mRadioResponse = radioResponse;
+ }
+@@ -259,7 +262,19 @@ Return<void> LgeRadioResponseV2::getIMSNetworkInfoResponse(const RadioResponseIn
+ 
+ Return<void> LgeRadioResponseV2::lgeGetSignalStrengthResponse(
+         const RadioResponseInfo& info, const LgeSignalStrength& signalStrength) {
+-    return Void();
++    GsmSignalStrength gsm = {.signalStrength = signalStrength.gw.signalStrength,
++                             .bitErrorRate = signalStrength.gw.bitErrorRate,
++                             .timingAdvance = signalStrength.gw.timingAdvance};
++
++    SignalStrength standard = {.gsm = gsm,
++                               .cdma = signalStrength.cdma,
++                               .evdo = signalStrength.evdo,
++                               .lte = signalStrength.lte,
++                               .tdscdma = signalStrength.tdScdma,
++                               .wcdma = signalStrength.wcdma,
++                               .nr = signalStrength.nr};
++
++    return mRadioResponse->getSignalStrengthResponse_1_4(info, standard);
+ }
+ 
+ Return<void> LgeRadioResponseV2::lgeGetCurrentCallsResponse(const RadioResponseInfo& info,
+diff --git a/hidl/radio/Radio.cpp b/hidl/radio/Radio.cpp
+index 880615b..9702eaa 100644
+--- a/hidl/radio/Radio.cpp
++++ b/hidl/radio/Radio.cpp
+@@ -54,6 +54,15 @@
+         }                                               \
+     } while (0)
+ 
++#define WRAP_V1_5_CALL(method, ...)                                            \
++    do {                                                                       \
++        auto realRadio_V1_5 = getRealRadio_V1_5();                             \
++        if (realRadio_V1_5 != nullptr) {                                       \
++            return realRadio_V1_5->method(__VA_ARGS__);                        \
++        }                                                                      \
++        return Status::fromExceptionCode(Status::Exception::EX_ILLEGAL_STATE); \
++    } while (0)
++
+ namespace android::hardware::radio::implementation {
+ 
+ Radio::Radio(sp<V1_0::IRadio> realRadio, int slotId) : mRealRadio(realRadio) {
+@@ -63,16 +72,28 @@ Radio::Radio(sp<V1_0::IRadio> realRadio, int slotId) : mRealRadio(realRadio) {
+ // Methods from ::android::hardware::radio::V1_0::IRadio follow.
+ Return<void> Radio::setResponseFunctions(const sp<V1_0::IRadioResponse>& radioResponse,
+                                          const sp<V1_0::IRadioIndication>& radioIndication) {
+-    mRadioResponse->mRealRadioResponse = V1_4::IRadioResponse::castFrom(radioResponse);
+-    mRadioIndication->mRealRadioIndication = V1_4::IRadioIndication::castFrom(radioIndication);
++    mRadioResponse->mRealRadioResponse =
++            V1_5::IRadioResponse::castFrom(radioResponse).withDefault(nullptr);
++    mRadioIndication->mRealRadioIndication =
++            V1_5::IRadioIndication::castFrom(radioIndication).withDefault(nullptr);
++
++    if (mRadioResponse->mRealRadioResponse == nullptr ||
++        mRadioIndication->mRealRadioIndication == nullptr) {
++        LOG(ERROR) << "Framework did not provide Radio 1.5 callbacks for slot " << mSlotId;
++        return Status::fromExceptionCode(Status::Exception::EX_ILLEGAL_ARGUMENT);
++    }
+ 
+     // We also need to do some funny for LgeRadio here.
+     mLgeRadioResponse = new LgeRadioResponseV2(
+             V1_4::IRadioResponse::castFrom(radioResponse).withDefault(nullptr));
+     mLgeRadioIndication = new LgeRadioIndicationV2(
+             V1_4::IRadioIndication::castFrom(radioIndication).withDefault(nullptr));
+-    auto svc = ILgeRadio::getService("lge_radio" + (mSlotId != 1 ? std::to_string(mSlotId) : ""));
+-    svc->setResponseFunctions(mLgeRadioResponse, mLgeRadioIndication);
++    mLgeRadio = ILgeRadio::getService("lge_radio" + (mSlotId != 1 ? std::to_string(mSlotId) : ""));
++    if (mLgeRadio == nullptr) {
++        LOG(ERROR) << "Cannot get LgeRadio service for slot " << mSlotId;
++        return Status::fromExceptionCode(Status::Exception::EX_ILLEGAL_STATE);
++    }
++    mLgeRadio->setResponseFunctions(mLgeRadioResponse, mLgeRadioIndication);
+ 
+     // Finally, set up radio
+     WRAP_V1_0_CALL(setResponseFunctions, mRadioResponse, mRadioIndication);
+@@ -970,10 +991,103 @@ Return<void> Radio::getAllowedCarriers_1_4(int32_t serial) {
+ }
+ 
+ Return<void> Radio::getSignalStrength_1_4(int32_t serial) {
++    if (mLgeRadio != nullptr) {
++        return mLgeRadio->lgeGetSignalStrength(serial);
++    }
+     MAYBE_WRAP_V1_4_CALL(getSignalStrength_1_4, serial);
+     WRAP_V1_0_CALL(getSignalStrength, serial);
+ }
+ 
++// Methods from ::android::hardware::radio::V1_5::IRadio follow.
++Return<void> Radio::setSignalStrengthReportingCriteria_1_5(
++        int32_t serial, const V1_5::SignalThresholdInfo& signalThresholdInfo,
++        V1_5::AccessNetwork accessNetwork) {
++    WRAP_V1_5_CALL(setSignalStrengthReportingCriteria_1_5, serial, signalThresholdInfo,
++                   accessNetwork);
++}
++
++Return<void> Radio::setLinkCapacityReportingCriteria_1_5(
++        int32_t serial, int32_t hysteresisMs, int32_t hysteresisDlKbps, int32_t hysteresisUlKbps,
++        const hidl_vec<int32_t>& thresholdsDownlinkKbps,
++        const hidl_vec<int32_t>& thresholdsUplinkKbps, V1_5::AccessNetwork accessNetwork) {
++    WRAP_V1_5_CALL(setLinkCapacityReportingCriteria_1_5, serial, hysteresisMs, hysteresisDlKbps,
++                   hysteresisUlKbps, thresholdsDownlinkKbps, thresholdsUplinkKbps, accessNetwork);
++}
++
++Return<void> Radio::enableUiccApplications(int32_t serial, bool enable) {
++    WRAP_V1_5_CALL(enableUiccApplications, serial, enable);
++}
++
++Return<void> Radio::areUiccApplicationsEnabled(int32_t serial) {
++    WRAP_V1_5_CALL(areUiccApplicationsEnabled, serial);
++}
++
++Return<void> Radio::setSystemSelectionChannels_1_5(
++        int32_t serial, bool specifyChannels,
++        const hidl_vec<V1_5::RadioAccessSpecifier>& specifiers) {
++    WRAP_V1_5_CALL(setSystemSelectionChannels_1_5, serial, specifyChannels, specifiers);
++}
++
++Return<void> Radio::startNetworkScan_1_5(int32_t serial, const V1_5::NetworkScanRequest& request) {
++    WRAP_V1_5_CALL(startNetworkScan_1_5, serial, request);
++}
++
++Return<void> Radio::setupDataCall_1_5(int32_t serial, V1_5::AccessNetwork accessNetwork,
++                                      const V1_5::DataProfileInfo& dataProfileInfo,
++                                      bool roamingAllowed, V1_2::DataRequestReason reason,
++                                      const hidl_vec<V1_5::LinkAddress>& addresses,
++                                      const hidl_vec<hidl_string>& dnses) {
++    WRAP_V1_5_CALL(setupDataCall_1_5, serial, accessNetwork, dataProfileInfo, roamingAllowed,
++                   reason, addresses, dnses);
++}
++
++Return<void> Radio::setInitialAttachApn_1_5(int32_t serial,
++                                            const V1_5::DataProfileInfo& dataProfileInfo) {
++    WRAP_V1_5_CALL(setInitialAttachApn_1_5, serial, dataProfileInfo);
++}
++
++Return<void> Radio::setDataProfile_1_5(int32_t serial,
++                                       const hidl_vec<V1_5::DataProfileInfo>& profiles) {
++    WRAP_V1_5_CALL(setDataProfile_1_5, serial, profiles);
++}
++
++Return<void> Radio::setRadioPower_1_5(int32_t serial, bool powerOn, bool forEmergencyCall,
++                                      bool preferredForEmergencyCall) {
++    WRAP_V1_5_CALL(setRadioPower_1_5, serial, powerOn, forEmergencyCall, preferredForEmergencyCall);
++}
++
++Return<void> Radio::setIndicationFilter_1_5(
++        int32_t serial, hidl_bitfield<V1_5::IndicationFilter> indicationFilter) {
++    WRAP_V1_5_CALL(setIndicationFilter_1_5, serial, indicationFilter);
++}
++
++Return<void> Radio::getBarringInfo(int32_t serial) {
++    WRAP_V1_5_CALL(getBarringInfo, serial);
++}
++
++Return<void> Radio::getVoiceRegistrationState_1_5(int32_t serial) {
++    WRAP_V1_5_CALL(getVoiceRegistrationState_1_5, serial);
++}
++
++Return<void> Radio::getDataRegistrationState_1_5(int32_t serial) {
++    WRAP_V1_5_CALL(getDataRegistrationState_1_5, serial);
++}
++
++Return<void> Radio::setNetworkSelectionModeManual_1_5(int32_t serial,
++                                                      const hidl_string& operatorNumeric,
++                                                      V1_5::RadioAccessNetworks ran) {
++    WRAP_V1_5_CALL(setNetworkSelectionModeManual_1_5, serial, operatorNumeric, ran);
++}
++
++Return<void> Radio::sendCdmaSmsExpectMore(int32_t serial, const V1_0::CdmaSmsMessage& sms) {
++    WRAP_V1_5_CALL(sendCdmaSmsExpectMore, serial, sms);
++}
++
++Return<void> Radio::supplySimDepersonalization(int32_t serial, V1_5::PersoSubstate persoType,
++                                               const hidl_string& controlKey) {
++    WRAP_V1_5_CALL(supplySimDepersonalization, serial, persoType, controlKey);
++}
++
+ sp<V1_1::IRadio> Radio::getRealRadio_V1_1() {
+     return V1_1::IRadio::castFrom(mRealRadio).withDefault(nullptr);
+ }
+@@ -990,4 +1104,8 @@ sp<V1_4::IRadio> Radio::getRealRadio_V1_4() {
+     return V1_4::IRadio::castFrom(mRealRadio).withDefault(nullptr);
+ }
+ 
++sp<V1_5::IRadio> Radio::getRealRadio_V1_5() {
++    return V1_5::IRadio::castFrom(mRealRadio).withDefault(nullptr);
++}
++
+ }  // namespace android::hardware::radio::implementation
+diff --git a/hidl/radio/Radio.h b/hidl/radio/Radio.h
+index 6d66924..2e42ac6 100644
+--- a/hidl/radio/Radio.h
++++ b/hidl/radio/Radio.h
+@@ -6,7 +6,7 @@
+ 
+ #pragma once
+ 
+-#include <android/hardware/radio/1.4/IRadio.h>
++#include <android/hardware/radio/1.5/IRadio.h>
+ #include <hidl/MQDescriptor.h>
+ #include <hidl/Status.h>
+ 
+@@ -33,7 +33,7 @@ using vendor::lge::hardware::radio::V2_0::ILgeRadio;
+ using vendor::lge::hardware::radio::V2_0::ILgeRadioIndicationV2;
+ using vendor::lge::hardware::radio::V2_0::ILgeRadioResponseV2;
+ 
+-struct Radio : public V1_4::IRadio {
++struct Radio : public V1_5::IRadio {
+   public:
+     Radio(sp<V1_0::IRadio> realRadio, int slotId);
+ 
+@@ -269,11 +269,51 @@ struct Radio : public V1_4::IRadio {
+     Return<void> getAllowedCarriers_1_4(int32_t serial) override;
+     Return<void> getSignalStrength_1_4(int32_t serial) override;
+ 
++    // Methods from ::android::hardware::radio::V1_5::IRadio follow.
++    Return<void> setSignalStrengthReportingCriteria_1_5(
++            int32_t serial, const V1_5::SignalThresholdInfo& signalThresholdInfo,
++            V1_5::AccessNetwork accessNetwork) override;
++    Return<void> setLinkCapacityReportingCriteria_1_5(
++            int32_t serial, int32_t hysteresisMs, int32_t hysteresisDlKbps,
++            int32_t hysteresisUlKbps, const hidl_vec<int32_t>& thresholdsDownlinkKbps,
++            const hidl_vec<int32_t>& thresholdsUplinkKbps,
++            V1_5::AccessNetwork accessNetwork) override;
++    Return<void> enableUiccApplications(int32_t serial, bool enable) override;
++    Return<void> areUiccApplicationsEnabled(int32_t serial) override;
++    Return<void> setSystemSelectionChannels_1_5(
++            int32_t serial, bool specifyChannels,
++            const hidl_vec<V1_5::RadioAccessSpecifier>& specifiers) override;
++    Return<void> startNetworkScan_1_5(int32_t serial,
++                                      const V1_5::NetworkScanRequest& request) override;
++    Return<void> setupDataCall_1_5(int32_t serial, V1_5::AccessNetwork accessNetwork,
++                                   const V1_5::DataProfileInfo& dataProfileInfo,
++                                   bool roamingAllowed, V1_2::DataRequestReason reason,
++                                   const hidl_vec<V1_5::LinkAddress>& addresses,
++                                   const hidl_vec<hidl_string>& dnses) override;
++    Return<void> setInitialAttachApn_1_5(int32_t serial,
++                                         const V1_5::DataProfileInfo& dataProfileInfo) override;
++    Return<void> setDataProfile_1_5(int32_t serial,
++                                    const hidl_vec<V1_5::DataProfileInfo>& profiles) override;
++    Return<void> setRadioPower_1_5(int32_t serial, bool powerOn, bool forEmergencyCall,
++                                   bool preferredForEmergencyCall) override;
++    Return<void> setIndicationFilter_1_5(
++            int32_t serial, hidl_bitfield<V1_5::IndicationFilter> indicationFilter) override;
++    Return<void> getBarringInfo(int32_t serial) override;
++    Return<void> getVoiceRegistrationState_1_5(int32_t serial) override;
++    Return<void> getDataRegistrationState_1_5(int32_t serial) override;
++    Return<void> setNetworkSelectionModeManual_1_5(int32_t serial,
++                                                   const hidl_string& operatorNumeric,
++                                                   V1_5::RadioAccessNetworks ran) override;
++    Return<void> sendCdmaSmsExpectMore(int32_t serial, const V1_0::CdmaSmsMessage& sms) override;
++    Return<void> supplySimDepersonalization(int32_t serial, V1_5::PersoSubstate persoType,
++                                            const hidl_string& controlKey) override;
++
+   private:
+     int mSlotId;
+     sp<V1_0::IRadio> mRealRadio;
+     sp<RadioResponse> mRadioResponse = new RadioResponse();
+     sp<RadioIndication> mRadioIndication = new RadioIndication();
++    sp<ILgeRadio> mLgeRadio;
+     sp<LgeRadioResponseV2> mLgeRadioResponse;
+     sp<LgeRadioIndicationV2> mLgeRadioIndication;
+ 
+@@ -281,6 +321,7 @@ struct Radio : public V1_4::IRadio {
+     sp<V1_2::IRadio> getRealRadio_V1_2();
+     sp<V1_3::IRadio> getRealRadio_V1_3();
+     sp<V1_4::IRadio> getRealRadio_V1_4();
++    sp<V1_5::IRadio> getRealRadio_V1_5();
+ };
+ 
+ }  // namespace android::hardware::radio::implementation
+diff --git a/hidl/radio/RadioIndication.cpp b/hidl/radio/RadioIndication.cpp
+index 73aa8da..ca77c4e 100644
+--- a/hidl/radio/RadioIndication.cpp
++++ b/hidl/radio/RadioIndication.cpp
+@@ -312,4 +312,40 @@ Return<void> RadioIndication::currentSignalStrength_1_4(
+     return mRealRadioIndication->currentSignalStrength_1_4(type, signalStrength);
+ }
+ 
++// Methods from ::android::hardware::radio::V1_5::IRadioIndication follow.
++Return<void> RadioIndication::uiccApplicationsEnablementChanged(V1_0::RadioIndicationType type,
++                                                                bool enabled) {
++    return mRealRadioIndication->uiccApplicationsEnablementChanged(type, enabled);
++}
++
++Return<void> RadioIndication::registrationFailed(V1_0::RadioIndicationType type,
++                                                 const V1_5::CellIdentity& cellIdentity,
++                                                 const hidl_string& chosenPlmn,
++                                                 hidl_bitfield<V1_5::Domain> domain,
++                                                 int32_t causeCode, int32_t additionalCauseCode) {
++    return mRealRadioIndication->registrationFailed(type, cellIdentity, chosenPlmn, domain,
++                                                    causeCode, additionalCauseCode);
++}
++
++Return<void> RadioIndication::barringInfoChanged(V1_0::RadioIndicationType type,
++                                                 const V1_5::CellIdentity& cellIdentity,
++                                                 const hidl_vec<V1_5::BarringInfo>& barringInfos) {
++    return mRealRadioIndication->barringInfoChanged(type, cellIdentity, barringInfos);
++}
++
++Return<void> RadioIndication::cellInfoList_1_5(V1_0::RadioIndicationType type,
++                                               const hidl_vec<V1_5::CellInfo>& records) {
++    return mRealRadioIndication->cellInfoList_1_5(type, records);
++}
++
++Return<void> RadioIndication::networkScanResult_1_5(V1_0::RadioIndicationType type,
++                                                    const V1_5::NetworkScanResult& result) {
++    return mRealRadioIndication->networkScanResult_1_5(type, result);
++}
++
++Return<void> RadioIndication::dataCallListChanged_1_5(
++        V1_0::RadioIndicationType type, const hidl_vec<V1_5::SetupDataCallResult>& dcList) {
++    return mRealRadioIndication->dataCallListChanged_1_5(type, dcList);
++}
++
+ }  // namespace android::hardware::radio::implementation
+diff --git a/hidl/radio/RadioIndication.h b/hidl/radio/RadioIndication.h
+index 41cc5e6..71acdc8 100644
+--- a/hidl/radio/RadioIndication.h
++++ b/hidl/radio/RadioIndication.h
+@@ -6,7 +6,7 @@
+ 
+ #pragma once
+ 
+-#include <android/hardware/radio/1.4/IRadioIndication.h>
++#include <android/hardware/radio/1.5/IRadioIndication.h>
+ #include <hidl/MQDescriptor.h>
+ #include <hidl/Status.h>
+ 
+@@ -20,8 +20,8 @@ using ::android::hardware::hidl_vec;
+ using ::android::hardware::Return;
+ using ::android::hardware::Void;
+ 
+-struct RadioIndication : public V1_4::IRadioIndication {
+-    sp<V1_4::IRadioIndication> mRealRadioIndication;
++struct RadioIndication : public V1_5::IRadioIndication {
++    sp<V1_5::IRadioIndication> mRealRadioIndication;
+     // Methods from ::android::hardware::radio::V1_0::IRadioIndication follow.
+     Return<void> radioStateChanged(V1_0::RadioIndicationType type,
+                                    V1_0::RadioState radioState) override;
+@@ -128,6 +128,25 @@ struct RadioIndication : public V1_4::IRadioIndication {
+             const hidl_vec<V1_4::SetupDataCallResult>& dcList) override;
+     Return<void> currentSignalStrength_1_4(V1_0::RadioIndicationType type,
+                                            const V1_4::SignalStrength& signalStrength) override;
++
++    // Methods from ::android::hardware::radio::V1_5::IRadioIndication follow.
++    Return<void> uiccApplicationsEnablementChanged(V1_0::RadioIndicationType type,
++                                                   bool enabled) override;
++    Return<void> registrationFailed(V1_0::RadioIndicationType type,
++                                    const V1_5::CellIdentity& cellIdentity,
++                                    const hidl_string& chosenPlmn,
++                                    hidl_bitfield<V1_5::Domain> domain, int32_t causeCode,
++                                    int32_t additionalCauseCode) override;
++    Return<void> barringInfoChanged(V1_0::RadioIndicationType type,
++                                    const V1_5::CellIdentity& cellIdentity,
++                                    const hidl_vec<V1_5::BarringInfo>& barringInfos) override;
++    Return<void> cellInfoList_1_5(V1_0::RadioIndicationType type,
++                                  const hidl_vec<V1_5::CellInfo>& records) override;
++    Return<void> networkScanResult_1_5(V1_0::RadioIndicationType type,
++                                       const V1_5::NetworkScanResult& result) override;
++    Return<void> dataCallListChanged_1_5(
++            V1_0::RadioIndicationType type,
++            const hidl_vec<V1_5::SetupDataCallResult>& dcList) override;
+ };
+ 
+ }  // namespace android::hardware::radio::implementation
+diff --git a/hidl/radio/RadioResponse.cpp b/hidl/radio/RadioResponse.cpp
+index 15a487e..0889338 100644
+--- a/hidl/radio/RadioResponse.cpp
++++ b/hidl/radio/RadioResponse.cpp
+@@ -904,4 +904,103 @@ Return<void> RadioResponse::getSignalStrengthResponse_1_4(
+     return mRealRadioResponse->getSignalStrengthResponse_1_4(info, signalStrength);
+ }
+ 
++// Methods from ::android::hardware::radio::V1_5::IRadioResponse follow.
++Return<void> RadioResponse::setSignalStrengthReportingCriteriaResponse_1_5(
++        const V1_0::RadioResponseInfo& info) {
++    return mRealRadioResponse->setSignalStrengthReportingCriteriaResponse_1_5(info);
++}
++
++Return<void> RadioResponse::setLinkCapacityReportingCriteriaResponse_1_5(
++        const V1_0::RadioResponseInfo& info) {
++    return mRealRadioResponse->setLinkCapacityReportingCriteriaResponse_1_5(info);
++}
++
++Return<void> RadioResponse::enableUiccApplicationsResponse(const V1_0::RadioResponseInfo& info) {
++    return mRealRadioResponse->enableUiccApplicationsResponse(info);
++}
++
++Return<void> RadioResponse::areUiccApplicationsEnabledResponse(const V1_0::RadioResponseInfo& info,
++                                                               bool enabled) {
++    return mRealRadioResponse->areUiccApplicationsEnabledResponse(info, enabled);
++}
++
++Return<void> RadioResponse::setSystemSelectionChannelsResponse_1_5(
++        const V1_0::RadioResponseInfo& info) {
++    return mRealRadioResponse->setSystemSelectionChannelsResponse_1_5(info);
++}
++
++Return<void> RadioResponse::startNetworkScanResponse_1_5(const V1_0::RadioResponseInfo& info) {
++    return mRealRadioResponse->startNetworkScanResponse_1_5(info);
++}
++
++Return<void> RadioResponse::setupDataCallResponse_1_5(const V1_0::RadioResponseInfo& info,
++                                                      const V1_5::SetupDataCallResult& dcResponse) {
++    return mRealRadioResponse->setupDataCallResponse_1_5(info, dcResponse);
++}
++
++Return<void> RadioResponse::getDataCallListResponse_1_5(
++        const V1_0::RadioResponseInfo& info,
++        const hidl_vec<V1_5::SetupDataCallResult>& dcResponse) {
++    return mRealRadioResponse->getDataCallListResponse_1_5(info, dcResponse);
++}
++
++Return<void> RadioResponse::setInitialAttachApnResponse_1_5(const V1_0::RadioResponseInfo& info) {
++    return mRealRadioResponse->setInitialAttachApnResponse_1_5(info);
++}
++
++Return<void> RadioResponse::setDataProfileResponse_1_5(const V1_0::RadioResponseInfo& info) {
++    return mRealRadioResponse->setDataProfileResponse_1_5(info);
++}
++
++Return<void> RadioResponse::setRadioPowerResponse_1_5(const V1_0::RadioResponseInfo& info) {
++    return mRealRadioResponse->setRadioPowerResponse_1_5(info);
++}
++
++Return<void> RadioResponse::setIndicationFilterResponse_1_5(const V1_0::RadioResponseInfo& info) {
++    return mRealRadioResponse->setIndicationFilterResponse_1_5(info);
++}
++
++Return<void> RadioResponse::getBarringInfoResponse(
++        const V1_0::RadioResponseInfo& info, const V1_5::CellIdentity& cellIdentity,
++        const hidl_vec<V1_5::BarringInfo>& barringInfos) {
++    return mRealRadioResponse->getBarringInfoResponse(info, cellIdentity, barringInfos);
++}
++
++Return<void> RadioResponse::getVoiceRegistrationStateResponse_1_5(
++        const V1_0::RadioResponseInfo& info, const V1_5::RegStateResult& voiceRegResponse) {
++    return mRealRadioResponse->getVoiceRegistrationStateResponse_1_5(info, voiceRegResponse);
++}
++
++Return<void> RadioResponse::getDataRegistrationStateResponse_1_5(
++        const V1_0::RadioResponseInfo& info, const V1_5::RegStateResult& dataRegResponse) {
++    return mRealRadioResponse->getDataRegistrationStateResponse_1_5(info, dataRegResponse);
++}
++
++Return<void> RadioResponse::getCellInfoListResponse_1_5(const V1_0::RadioResponseInfo& info,
++                                                        const hidl_vec<V1_5::CellInfo>& cellInfo) {
++    return mRealRadioResponse->getCellInfoListResponse_1_5(info, cellInfo);
++}
++
++Return<void> RadioResponse::setNetworkSelectionModeManualResponse_1_5(
++        const V1_0::RadioResponseInfo& info) {
++    return mRealRadioResponse->setNetworkSelectionModeManualResponse_1_5(info);
++}
++
++Return<void> RadioResponse::sendCdmaSmsExpectMoreResponse(const V1_0::RadioResponseInfo& info,
++                                                          const V1_0::SendSmsResult& sms) {
++    return mRealRadioResponse->sendCdmaSmsExpectMoreResponse(info, sms);
++}
++
++Return<void> RadioResponse::supplySimDepersonalizationResponse(const V1_0::RadioResponseInfo& info,
++                                                               V1_5::PersoSubstate persoType,
++                                                               int32_t remainingRetries) {
++    return mRealRadioResponse->supplySimDepersonalizationResponse(info, persoType,
++                                                                  remainingRetries);
++}
++
++Return<void> RadioResponse::getIccCardStatusResponse_1_5(const V1_0::RadioResponseInfo& info,
++                                                         const V1_5::CardStatus& cardStatus) {
++    return mRealRadioResponse->getIccCardStatusResponse_1_5(info, cardStatus);
++}
++
+ }  // namespace android::hardware::radio::implementation
+diff --git a/hidl/radio/RadioResponse.h b/hidl/radio/RadioResponse.h
+index aecd38d..0df5e9c 100644
+--- a/hidl/radio/RadioResponse.h
++++ b/hidl/radio/RadioResponse.h
+@@ -6,7 +6,7 @@
+ 
+ #pragma once
+ 
+-#include <android/hardware/radio/1.4/IRadioResponse.h>
++#include <android/hardware/radio/1.5/IRadioResponse.h>
+ #include <hidl/MQDescriptor.h>
+ #include <hidl/Status.h>
+ 
+@@ -20,8 +20,8 @@ using ::android::hardware::hidl_vec;
+ using ::android::hardware::Return;
+ using ::android::hardware::Void;
+ 
+-struct RadioResponse : public V1_4::IRadioResponse {
+-    sp<V1_4::IRadioResponse> mRealRadioResponse;
++struct RadioResponse : public V1_5::IRadioResponse {
++    sp<V1_5::IRadioResponse> mRealRadioResponse;
+     V1_0::RadioTechnology mRat = V1_0::RadioTechnology::UNKNOWN;
+     bool mDataRoaming = false;
+     // Methods from ::android::hardware::radio::V1_0::IRadioResponse follow.
+@@ -306,6 +306,47 @@ struct RadioResponse : public V1_4::IRadioResponse {
+             V1_4::SimLockMultiSimPolicy multiSimPolicy) override;
+     Return<void> getSignalStrengthResponse_1_4(const V1_0::RadioResponseInfo& info,
+                                                const V1_4::SignalStrength& signalStrength) override;
++
++    // Methods from ::android::hardware::radio::V1_5::IRadioResponse follow.
++    Return<void> setSignalStrengthReportingCriteriaResponse_1_5(
++            const V1_0::RadioResponseInfo& info) override;
++    Return<void> setLinkCapacityReportingCriteriaResponse_1_5(
++            const V1_0::RadioResponseInfo& info) override;
++    Return<void> enableUiccApplicationsResponse(const V1_0::RadioResponseInfo& info) override;
++    Return<void> areUiccApplicationsEnabledResponse(const V1_0::RadioResponseInfo& info,
++                                                    bool enabled) override;
++    Return<void> setSystemSelectionChannelsResponse_1_5(
++            const V1_0::RadioResponseInfo& info) override;
++    Return<void> startNetworkScanResponse_1_5(const V1_0::RadioResponseInfo& info) override;
++    Return<void> setupDataCallResponse_1_5(const V1_0::RadioResponseInfo& info,
++                                           const V1_5::SetupDataCallResult& dcResponse) override;
++    Return<void> getDataCallListResponse_1_5(
++            const V1_0::RadioResponseInfo& info,
++            const hidl_vec<V1_5::SetupDataCallResult>& dcResponse) override;
++    Return<void> setInitialAttachApnResponse_1_5(const V1_0::RadioResponseInfo& info) override;
++    Return<void> setDataProfileResponse_1_5(const V1_0::RadioResponseInfo& info) override;
++    Return<void> setRadioPowerResponse_1_5(const V1_0::RadioResponseInfo& info) override;
++    Return<void> setIndicationFilterResponse_1_5(const V1_0::RadioResponseInfo& info) override;
++    Return<void> getBarringInfoResponse(const V1_0::RadioResponseInfo& info,
++                                        const V1_5::CellIdentity& cellIdentity,
++                                        const hidl_vec<V1_5::BarringInfo>& barringInfos) override;
++    Return<void> getVoiceRegistrationStateResponse_1_5(
++            const V1_0::RadioResponseInfo& info,
++            const V1_5::RegStateResult& voiceRegResponse) override;
++    Return<void> getDataRegistrationStateResponse_1_5(
++            const V1_0::RadioResponseInfo& info,
++            const V1_5::RegStateResult& dataRegResponse) override;
++    Return<void> getCellInfoListResponse_1_5(const V1_0::RadioResponseInfo& info,
++                                             const hidl_vec<V1_5::CellInfo>& cellInfo) override;
++    Return<void> setNetworkSelectionModeManualResponse_1_5(
++            const V1_0::RadioResponseInfo& info) override;
++    Return<void> sendCdmaSmsExpectMoreResponse(const V1_0::RadioResponseInfo& info,
++                                               const V1_0::SendSmsResult& sms) override;
++    Return<void> supplySimDepersonalizationResponse(const V1_0::RadioResponseInfo& info,
++                                                    V1_5::PersoSubstate persoType,
++                                                    int32_t remainingRetries) override;
++    Return<void> getIccCardStatusResponse_1_5(const V1_0::RadioResponseInfo& info,
++                                              const V1_5::CardStatus& cardStatus) override;
+ };
+ 
+ }  // namespace android::hardware::radio::implementation
+diff --git a/hidl/radio/android.hardware.radio@1.4-service.lge.rc b/hidl/radio/android.hardware.radio@1.4-service.lge.rc
+index 60be038..b033219 100644
+--- a/hidl/radio/android.hardware.radio@1.4-service.lge.rc
++++ b/hidl/radio/android.hardware.radio@1.4-service.lge.rc
+@@ -4,6 +4,7 @@ service vendor.radio-1-4-lge /vendor/bin/hw/android.hardware.radio@1.4-service.l
+     interface android.hardware.radio@1.2::IRadio default
+     interface android.hardware.radio@1.3::IRadio default
+     interface android.hardware.radio@1.4::IRadio default
++    interface android.hardware.radio@1.5::IRadio default
+     class hal
+     user system
+     group system
+diff --git a/hidl/radio/service.cpp b/hidl/radio/service.cpp
+index 92e67b6..112cefc 100644
+--- a/hidl/radio/service.cpp
++++ b/hidl/radio/service.cpp
+@@ -30,7 +30,7 @@ using android::status_t;
+ 
+ int main() {
+     // Note: Starts from slot 1
+-    std::map<int, sp<V1_4::IRadio>> slotIdToRadio;
++    std::map<int, sp<V1_5::IRadio>> slotIdToRadio;
+ 
+     int MAX_SLOT_ID = GetIntProperty("ro.boot.vendor.lge.sim_num", 1);
+     for (int slotId = 1; slotId <= MAX_SLOT_ID; slotId++) {
